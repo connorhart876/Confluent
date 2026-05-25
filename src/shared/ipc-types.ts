@@ -1,5 +1,7 @@
 import type { Trade, NewTrade, SetupType, StrategyRules } from '../main/db/schema'
 
+export type { Trade, SetupType, StrategyRules }
+
 // Generic IPC response envelope
 export type IpcOk<T> = { success: true; data: T }
 export type IpcErr = { success: false; error: string }
