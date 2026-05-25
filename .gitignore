@@ -23,6 +23,9 @@ desktop.ini
 .vscode/settings.json
 .idea/
 
+# Claude Code local settings (project commands in .claude/commands/ are committed)
+.claude/settings.local.json
+
 # Logs
 logs/
 *.log
