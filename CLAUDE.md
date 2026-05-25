@@ -159,6 +159,8 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 - `feature/<short-name>` — new feature work (e.g., `feature/trade-logger`, `feature/calendar-view`)
 - `fix/<short-name>` — bug fixes (e.g., `fix/pnl-validation`)
 - `chore/<short-name>` — tooling, config, deps (e.g., `chore/tailwind-setup`)
+- `dev` — accumulates finished issue work. Feature branches merge here.
+- Merge to `main` at milestone boundaries only. Never commit directly to main.
 
 ### Commits
 
@@ -206,5 +208,4 @@ npm run db:studio        # Open Drizzle Studio visual DB browser (dev only)
 - `docs/REFERENCE.md` — feature-by-feature reference: behavior, constraints, and edge cases for every MVP feature
 - `docs/STATUS.md` — current milestone, MVP completion checklist, milestone roadmap, deferred features
 - `docs/CHANGELOG.md` — versioned change history; [Unreleased] section for in-progress work
-- `.env.example` — environment variable template (API keys for V2+, not needed for MVP)
 - `.claude/commands/update-docs.md` — `/update-docs` slash command to keep all docs in sync
