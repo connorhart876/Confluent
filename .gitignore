@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-electron/
+out/
+
+# Electron
+release/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# SQLite database (local data, not committed)
+*.db
+*.db-shm
+*.db-wal
+
+# Screenshots stored by the app
+screenshots/
+
+# drizzle migrations output (optional — commit if you want migration history)
+# drizzle/
+
+# TypeScript
+*.tsbuildinfo
