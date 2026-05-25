@@ -199,9 +199,9 @@ npm run db:studio        # Open Drizzle Studio visual DB browser (dev only)
 
 ## Key Files
 
-- `docs/brainstorm.md` — product vision, milestone definitions (MVP / V2 / V3 / Later / Not in Scope)
-- `docs/project_spec.md` — full MVP specification, data model, error handling, success checklist
-- `docs/research_report_tech_stack.md` — tech stack evaluation and rationale for every choice
+- `brainstorm.md` — product vision, milestone definitions (MVP / V2 / V3 / Later / Not in Scope)
+- `project_spec.md` — full MVP specification, data model, error handling, success checklist
+- `research_report_tech_stack.md` — tech stack evaluation and rationale for every choice
 - `docs/ARCHITECTURE.md` — process model, IPC layer, data layer, file system, frontend structure, dependency boundaries
 - `docs/REFERENCE.md` — feature-by-feature reference: behavior, constraints, and edge cases for every MVP feature
 - `docs/STATUS.md` — current milestone, MVP completion checklist, milestone roadmap, deferred features

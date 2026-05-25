@@ -8,7 +8,7 @@ _Update this file as work completes. Check off items as they pass manual verific
 
 A fully offline manual trade journal with user-defined strategy rules — no AI, no broker integration, no external dependencies.
 
-**Status:** Not started
+**Status:** In progress
 
 ---
 
@@ -57,8 +57,13 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [ ] Minimum window size enforced at 1280 × 800 px
 - [ ] Data persists across app restarts
 - [ ] App works fully offline (no internet required)
-- [ ] Missing screenshot directory is created automatically on startup
+- [x] Missing screenshot directory is created automatically on startup
 - [ ] Corrupted database shows an error screen with recovery instructions rather than crashing silently
+
+### Infrastructure (completed pre-feature)
+- [x] Initial Drizzle migration generated (`drizzle/migrations/0000_lethal_magdalene.sql`)
+- [x] DB layer initialized in main process (`src/main/db/index.ts`) — opens SQLite at userData path, runs migrations, creates screenshots/ and logs/ directories
+- [x] All IPC handlers registered (`src/main/ipc/index.ts`) — trade:*, setup-type:*, strategy-rules:* channels wired
 
 ---
 
