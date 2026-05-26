@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initDb } from './db'
@@ -44,7 +44,23 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  initDb()
+  try {
+    initDb()
+  } catch (e) {
+    const dbPath = join(app.getPath('userData'), 'confluent.db')
+    dialog.showErrorBox(
+      'Database Error',
+      `Confluent could not open its database. The file may be corrupted.\n\n` +
+      `Database path:\n${dbPath}\n\n` +
+      `To recover:\n` +
+      `1. Navigate to the path above\n` +
+      `2. Delete or rename confluent.db\n` +
+      `3. Restart Confluent — a fresh database will be created automatically\n\n` +
+      `Error: ${e instanceof Error ? e.message : String(e)}`
+    )
+    app.quit()
+    return
+  }
   registerHandlers()
   createWindow()
 
