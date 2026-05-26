@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { writeFileSync, unlinkSync } from 'fs'
+import { writeFileSync, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { eq, and, gte, lte, sql } from 'drizzle-orm'
 import { db, screenshotsPath } from '../db'
@@ -320,6 +320,22 @@ export function registerHandlers(): void {
         .returning()
         .all()
       return ok(inserted)
+    } catch (e) {
+      return err(e instanceof Error ? e.message : 'Unknown error')
+    }
+  })
+
+  // ── screenshots ───────────────────────────────────────────────────────────
+
+  ipcMain.handle('screenshot:load', (_e, payload) => {
+    try {
+      const { filename } = payload as { filename: string }
+      try {
+        const buffer = readFileSync(join(screenshotsPath, filename))
+        return ok(`data:image/png;base64,${buffer.toString('base64')}`)
+      } catch {
+        return ok(null)
+      }
     } catch (e) {
       return err(e instanceof Error ? e.message : 'Unknown error')
     }

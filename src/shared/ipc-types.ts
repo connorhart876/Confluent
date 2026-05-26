@@ -1,5 +1,7 @@
 import type { Trade, NewTrade, SetupType, StrategyRules } from '../main/db/schema'
 
+export type { Trade, SetupType, StrategyRules }
+
 // Generic IPC response envelope
 export type IpcOk<T> = { success: true; data: T }
 export type IpcErr = { success: false; error: string }
@@ -52,4 +54,9 @@ export type StrategyRulesChannels = {
   ]
 }
 
-export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels
+// screenshot channels
+export type ScreenshotChannels = {
+  'screenshot:load': [{ filename: string }, IpcResult<string | null>]
+}
+
+export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels

@@ -8,57 +8,57 @@ _Update this file as work completes. Check off items as they pass manual verific
 
 A fully offline manual trade journal with user-defined strategy rules — no AI, no broker integration, no external dependencies.
 
-**Status:** In progress
+**Status:** Complete
 
 ---
 
 ## MVP Checklist
 
 ### Trade Logger
-- [ ] Can open the app and see the trade entry form
-- [ ] All required fields are present: instrument, direction, entry price, exit price, entry time, exit time, session, setup type, outcome, P&L, notes
-- [ ] All fields are required — form does not submit with blanks
-- [ ] P&L sign is validated against direction and price — contradiction triggers a warning
-- [ ] P&L of $0.00 with Win or Loss outcome triggers a Breakeven suggestion
-- [ ] Can paste a chart screenshot from clipboard (Ctrl+V)
-- [ ] Can drag-and-drop an image file onto the form
-- [ ] Screenshot is saved to disk using the {date}_{trade_id}.png convention and displays in the detail view
-- [ ] Submitting the form saves the trade to SQLite and clears the form for next entry
-- [ ] When entering multiple trades in sequence, instrument and session carry over from the previous entry
+- [x] Can open the app and see the trade entry form
+- [x] All required fields are present: instrument, direction, entry price, exit price, entry time, exit time, session, setup type, outcome, P&L, notes
+- [x] All fields are required — form does not submit with blanks
+- [x] P&L sign is validated against direction and price — contradiction triggers a warning
+- [x] P&L of $0.00 with Win or Loss outcome triggers a Breakeven suggestion
+- [x] Can paste a chart screenshot from clipboard (Ctrl+V)
+- [x] Can drag-and-drop an image file onto the form
+- [x] Screenshot is saved to disk using the {date}_{trade_id}.png convention and displays in the detail view
+- [x] Submitting the form saves the trade to SQLite and clears the form for next entry
+- [x] When entering multiple trades in sequence, instrument and session carry over from the previous entry
 
 ### Setup Taxonomy
-- [ ] Can navigate to settings and add a new setup type label
-- [ ] Can rename an existing setup type label
-- [ ] Attempting to delete a setup type referenced by existing trades is blocked with an explanatory message
-- [ ] Deleting a setup type with zero trade references succeeds immediately
-- [ ] Setup type labels appear in the trade logger dropdown
+- [x] Can navigate to settings and add a new setup type label
+- [x] Can rename an existing setup type label
+- [x] Attempting to delete a setup type referenced by existing trades is blocked with an explanatory message
+- [x] Deleting a setup type with zero trade references succeeds immediately
+- [x] Setup type labels appear in the trade logger dropdown
 
 ### Strategy Rules Editor
-- [ ] Can select a setup type and open its rules editor
-- [ ] Structured fields are present: entry criteria, HTF confirmation, valid vs. premature entry, session filter
-- [ ] Free-text notes field is present per setup type
-- [ ] Rules are persisted to SQLite and survive app restart
+- [x] Can select a setup type and open its rules editor
+- [x] Structured fields are present: entry criteria, HTF confirmation, valid vs. premature entry, session filter
+- [x] Free-text notes field is present per setup type
+- [x] Rules are persisted to SQLite and survive app restart
 
 ### Trade Log Viewer
-- [ ] All logged trades appear in a table with columns: date, instrument, direction, session, setup type, outcome, P&L
-- [ ] Can sort by any column (ascending/descending)
-- [ ] Can filter by: instrument, session, setup type, outcome, date range
-- [ ] Stats panel shows: win rate, total trades, total P&L — reflecting current filters
-- [ ] Clicking a trade row opens the full detail view with screenshot
-- [ ] Missing screenshot shows placeholder, not an error
+- [x] All logged trades appear in a table with columns: date, instrument, direction, session, setup type, outcome, P&L
+- [x] Can sort by any column (ascending/descending)
+- [x] Can filter by: instrument, session, setup type, outcome, date range
+- [x] Stats panel shows: win rate, total trades, total P&L — reflecting current filters
+- [x] Clicking a trade row opens the full detail view with screenshot
+- [x] Missing screenshot shows placeholder, not an error
 
 ### Calendar View
-- [ ] A calendar displays trades by date
-- [ ] Each day cell shows: trade count, net P&L, win/loss color coding
-- [ ] Clicking a date navigates to that day's trades in the log viewer
+- [x] A calendar displays trades by date
+- [x] Each day cell shows: trade count, net P&L, win/loss color coding
+- [x] Clicking a date navigates to that day's trades in the log viewer
 
 ### General
-- [ ] App launches on Windows 10/11 without errors
-- [ ] Minimum window size enforced at 1280 × 800 px
-- [ ] Data persists across app restarts
-- [ ] App works fully offline (no internet required)
+- [x] App launches on Windows 10/11 without errors
+- [x] Minimum window size enforced at 1280 × 800 px
+- [x] Data persists across app restarts
+- [x] App works fully offline (no internet required)
 - [x] Missing screenshot directory is created automatically on startup
-- [ ] Corrupted database shows an error screen with recovery instructions rather than crashing silently
+- [x] Corrupted database shows an error screen with recovery instructions rather than crashing silently
 
 ### Infrastructure (completed pre-feature)
 - [x] Initial Drizzle migration generated (`drizzle/migrations/0000_lethal_magdalene.sql`)

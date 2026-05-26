@@ -143,7 +143,7 @@ All channels use `domain:action` format:
 | `trade` | `create`, `update`, `delete`, `list`, `get` |
 | `setup-type` | `create`, `update`, `delete`, `list` |
 | `strategy-rules` | `get`, `upsert` |
-| `screenshot` | `save`, `delete` |
+| `screenshot` | `load` |
 
 ### Typed Channels
 
@@ -272,18 +272,21 @@ The renderer is a standard React SPA. electron-vite handles bundling, HMR, and t
 
 Zustand manages **UI state only** — things that don't need to be persisted and don't belong in the database.
 
-Examples of what lives in Zustand:
-- Active nav item
-- Current filter/sort state in Log Viewer
-- Form draft state in Trade Logger (not persisted — cleared on submit or app restart)
-- Selected trade in detail view
-- Active month in Calendar View
+**Stores implemented (`src/renderer/src/stores/`):**
+
+| Store | State | Purpose |
+|---|---|---|
+| `navigation-store.ts` | `activePage: Page` | Tracks the active sidebar page; defaults to `'trade-logger'` |
+| `trade-form-store.ts` | `lastInstrument`, `lastSession` | Persists instrument and session across consecutive form submissions for batch entry carry-over |
+| `log-viewer-store.ts` | `filters`, `sortColumn`, `sortDirection`, `selectedTradeId` | Log Viewer filter state (instrument, session, setup type, outcome, date range), active sort column and direction, and the ID of the trade open in the detail modal; filter state persists across in-session navigations |
 
 Zustand stores do **not** cache database results. Every view fetches its data via IPC when it mounts or when the user triggers an action. There is no client-side data cache in MVP.
 
 ### Shadcn/ui Components
 
-Shadcn/ui components are copied into the project source tree (not imported from a package). They live in `src/renderer/components/ui/` and are owned source code — customizable by editing directly. Radix UI primitives handle accessibility and keyboard behavior underneath.
+Shadcn/ui components are copied into the project source tree (not imported from a package). They live in `src/renderer/src/components/ui/` and are owned source code — customizable by editing directly. Radix UI primitives handle accessibility and keyboard behavior underneath.
+
+**Components present:** `Button`, `Input`, `Textarea`, `Label`, `Select`, `ToggleGroup`, `Toggle`, `Dialog`, `Toast`/`Toaster`/`useToast`, `Form`, `Table`, `Badge`, `Popover`, `Calendar`
 
 ---
 
@@ -301,7 +304,7 @@ These are hard rules, not conventions. Violating them breaks the security and ar
 | `window.api.*` (preload surface) | Yes | The only sanctioned data channel |
 | Zustand stores | Yes | Renderer-side UI state management |
 | Shadcn/ui + Tailwind | Yes | UI components, purely presentational |
-| React Router (or equivalent) | Yes | Client-side navigation within the renderer |
+| Zustand navigation store | Yes | Client-side navigation — `activePage` state replaces a URL router (desktop app, no URL bar needed) |
 
 The renderer is, for all practical purposes, a browser tab. It calls `window.api` methods and renders the results. All side effects happen in the main process.
 

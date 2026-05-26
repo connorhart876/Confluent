@@ -22,6 +22,9 @@ const api = {
   strategyRules: {
     get: (payload: { setupTypeId: number }) => invoke('strategy-rules:get', payload),
     upsert: (payload: unknown) => invoke('strategy-rules:upsert', payload)
+  },
+  screenshot: {
+    load: (payload: { filename: string }) => invoke('screenshot:load', payload)
   }
 }
 

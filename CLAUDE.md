@@ -26,9 +26,15 @@ Confluent is a **local Electron desktop app** for futures trading discipline. It
 | ORM | drizzle-orm | ^0.43.1 | Type-safe queries; `drizzle-orm/better-sqlite3` adapter |
 | Migrations | drizzle-kit | ^0.30.4 | Generates SQL migration files; applied at app startup |
 | Forms | react-hook-form | ^7.54.2 | Renderer only |
+| Form validation bridge | @hookform/resolvers | ^3.x | Connects zod schemas to react-hook-form |
 | Validation | zod | ^3.24.2 | Schema validation for IPC payloads and forms |
 | Dates | date-fns | ^4.1.0 | Date formatting and arithmetic |
 | CSS utilities | clsx + tailwind-merge | ^2.1.1 / ^2.6.0 | Powers the `cn()` helper used by Shadcn components |
+| CSS variants | class-variance-authority | ^0.7.x | Variant utility used by Shadcn components |
+| Animation | tailwindcss-animate | ^1.x | Tailwind plugin for Radix UI entry/exit animations |
+| Icons | lucide-react | ^0.x | Icon set used throughout the UI |
+| Radix UI primitives | @radix-ui/react-slot, react-label, react-select, react-toggle-group, react-dialog, react-toast, @radix-ui/react-popover | (various) | Accessibility primitives underlying Shadcn components |
+| Calendar | react-day-picker | ^10.0.1 | Used by Shadcn Calendar component in Log Viewer date filter |
 | AI SDK (V2+) | @anthropic-ai/sdk | — | **Not installed in MVP** |
 
 ### Native Module Setup
@@ -159,6 +165,8 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 - `feature/<short-name>` — new feature work (e.g., `feature/trade-logger`, `feature/calendar-view`)
 - `fix/<short-name>` — bug fixes (e.g., `fix/pnl-validation`)
 - `chore/<short-name>` — tooling, config, deps (e.g., `chore/tailwind-setup`)
+- `dev` — accumulates finished issue work. Feature branches merge here.
+- Merge to `main` at milestone boundaries only. Never commit directly to main.
 
 ### Commits
 
@@ -206,5 +214,4 @@ npm run db:studio        # Open Drizzle Studio visual DB browser (dev only)
 - `docs/REFERENCE.md` — feature-by-feature reference: behavior, constraints, and edge cases for every MVP feature
 - `docs/STATUS.md` — current milestone, MVP completion checklist, milestone roadmap, deferred features
 - `docs/CHANGELOG.md` — versioned change history; [Unreleased] section for in-progress work
-- `.env.example` — environment variable template (API keys for V2+, not needed for MVP)
 - `.claude/commands/update-docs.md` — `/update-docs` slash command to keep all docs in sync

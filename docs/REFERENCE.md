@@ -37,17 +37,20 @@ One section per major feature. Constraints and edge cases included.
 - Rules persist to SQLite immediately on save and survive app restart
 - These fields are the AI prompt foundation for V2 post-trade review — structured fields provide consistent parseable signal; free-text captures what they cannot
 - A setup type with empty rules fields is valid — the editor does not require rules to be filled in
+- Layout: two-panel — setup type list on the left, 5-field form on the right; first setup type is auto-selected on load
+- Switching setup types while the form has unsaved edits shows an inline amber banner ("Unsaved changes") with Save and Discard actions — the switch does not proceed until one is chosen
+- If no setup types have been created, the page shows an empty state with a link to Settings
 
 ---
 
 ## Trade Log Viewer
 
 - Sortable, filterable table of all logged trades
-- Columns: date, instrument, direction, session, setup type, outcome, P&L — with notes truncated in the table row
-- Filters: instrument, session, setup type, outcome, date range — combinable, all active simultaneously
-- Sort: any column, ascending or descending, one column at a time
-- Stats panel shows win rate, total trade count, and total P&L — recalculates to reflect active filters, not the full dataset
-- Clicking a trade row opens a detail view with all fields and the screenshot (or placeholder if file is missing)
+- Columns: date, instrument, direction, session, setup type, outcome (displayed as a badge), P&L (color-coded: green for positive, red for negative) — with notes truncated in the table row
+- Filters: instrument, session, setup type, outcome, date range — combinable, all active simultaneously; date range uses a calendar picker popover; filter state persists during the session (navigating away and back retains active filters)
+- Sort: any column, ascending or descending, one column at a time; sort is client-side (no additional IPC call); default is entry time descending (newest first)
+- Stats panel shows win rate, total trade count, and total P&L — recalculates to reflect active filters, not the full dataset; win rate shows "--" when no trades match
+- Clicking a trade row opens a detail modal with all fields and the screenshot (or a "Screenshot not found" placeholder if the file is missing)
 - No inline editing from the log viewer in MVP — trades are edited by opening the detail view (TBD if edit is in MVP scope)
 
 ---
@@ -57,8 +60,13 @@ One section per major feature. Constraints and edge cases included.
 - Month grid showing which days have trades
 - Each day cell displays: trade count, net P&L for the day, win/loss color coding (green = net positive, red = net negative, neutral = breakeven or no trades)
 - Derived entirely from the `trades` table — no separate data model or calendar-specific storage
-- Clicking a day navigates to Log Viewer filtered to that date
+- Only days with trades are clickable — clicking a day with trades navigates to the Log Viewer with date filters pre-set to that day; days with no trades are inert
 - Days with no trades are shown but empty — no distinction between a trading day with no logged trades and a non-trading day
+- Adjacent-month days (leading/trailing grid cells) are shown greyed out and are never clickable
+- Today's date has a subtle primary-color ring indicator to orient the user
+- Month navigation: previous/next chevron buttons; a "Today" button appears when viewing any month other than the current one
+- Data is fetched for the displayed month only (not all trades) — re-fetches when the month changes
+- Active month is local React state in `CalendarPage` — navigating away and back resets to the current month
 - No week or day view in MVP — month grid only
 
 ---
@@ -87,8 +95,8 @@ One section per major feature. Constraints and edge cases included.
 ## P&L Validation
 
 - P&L is entered manually — no auto-calculation from prices in MVP (contract multipliers and fees vary and would require additional configuration)
-- **Sign check:** if direction is Long and exit > entry, P&L must be positive; if exit < entry, P&L must be negative. Inverse for Short. A contradicting sign shows a warning and requires explicit confirmation before saving — it does not block submission (partial fills and fees may legitimately cause contradictions)
-- **Zero check:** P&L of exactly $0.00 with outcome set to Win or Loss triggers a suggestion to use Breakeven instead — does not block submission
+- **Sign check:** if direction is Long and exit > entry, P&L must be positive; if exit < entry, P&L must be negative. Inverse for Short. A contradicting sign opens a modal dialog ("P&L Warning") with "Go Back" and "Proceed Anyway" buttons — it does not block submission (partial fills and fees may legitimately cause contradictions). The check runs after zod validation passes, before the IPC call.
+- **Zero check:** P&L of exactly $0.00 with outcome set to Win or Loss shows an inline amber warning in the outcome field area with a "Change" button that sets outcome to Breakeven in one click — does not block submission. The warning appears reactively as the user types; it is not shown until both pnl and outcome have been set.
 - Both warnings are advisory — the user can override and save as entered
 
 ---
