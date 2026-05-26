@@ -37,6 +37,9 @@ One section per major feature. Constraints and edge cases included.
 - Rules persist to SQLite immediately on save and survive app restart
 - These fields are the AI prompt foundation for V2 post-trade review — structured fields provide consistent parseable signal; free-text captures what they cannot
 - A setup type with empty rules fields is valid — the editor does not require rules to be filled in
+- Layout: two-panel — setup type list on the left, 5-field form on the right; first setup type is auto-selected on load
+- Switching setup types while the form has unsaved edits shows an inline amber banner ("Unsaved changes") with Save and Discard actions — the switch does not proceed until one is chosen
+- If no setup types have been created, the page shows an empty state with a link to Settings
 
 ---
 

@@ -34,10 +34,10 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Setup type labels appear in the trade logger dropdown
 
 ### Strategy Rules Editor
-- [ ] Can select a setup type and open its rules editor
-- [ ] Structured fields are present: entry criteria, HTF confirmation, valid vs. premature entry, session filter
-- [ ] Free-text notes field is present per setup type
-- [ ] Rules are persisted to SQLite and survive app restart
+- [x] Can select a setup type and open its rules editor
+- [x] Structured fields are present: entry criteria, HTF confirmation, valid vs. premature entry, session filter
+- [x] Free-text notes field is present per setup type
+- [x] Rules are persisted to SQLite and survive app restart
 
 ### Trade Log Viewer
 - [ ] All logged trades appear in a table with columns: date, instrument, direction, session, setup type, outcome, P&L
