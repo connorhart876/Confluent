@@ -280,9 +280,6 @@ Zustand manages **UI state only** — things that don't need to be persisted and
 | `trade-form-store.ts` | `lastInstrument`, `lastSession` | Persists instrument and session across consecutive form submissions for batch entry carry-over |
 | `log-viewer-store.ts` | `filters`, `sortColumn`, `sortDirection`, `selectedTradeId` | Log Viewer filter state (instrument, session, setup type, outcome, date range), active sort column and direction, and the ID of the trade open in the detail modal; filter state persists across in-session navigations |
 
-**Planned (not yet implemented):**
-- Active month in Calendar View
-
 Zustand stores do **not** cache database results. Every view fetches its data via IPC when it mounts or when the user triggers an action. There is no client-side data cache in MVP.
 
 ### Shadcn/ui Components

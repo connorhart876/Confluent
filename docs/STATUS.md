@@ -48,9 +48,9 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Missing screenshot shows placeholder, not an error
 
 ### Calendar View
-- [ ] A calendar displays trades by date
-- [ ] Each day cell shows: trade count, net P&L, win/loss color coding
-- [ ] Clicking a date navigates to that day's trades in the log viewer
+- [x] A calendar displays trades by date
+- [x] Each day cell shows: trade count, net P&L, win/loss color coding
+- [x] Clicking a date navigates to that day's trades in the log viewer
 
 ### General
 - [x] App launches on Windows 10/11 without errors

@@ -60,8 +60,13 @@ One section per major feature. Constraints and edge cases included.
 - Month grid showing which days have trades
 - Each day cell displays: trade count, net P&L for the day, win/loss color coding (green = net positive, red = net negative, neutral = breakeven or no trades)
 - Derived entirely from the `trades` table — no separate data model or calendar-specific storage
-- Clicking a day navigates to Log Viewer filtered to that date
+- Only days with trades are clickable — clicking a day with trades navigates to the Log Viewer with date filters pre-set to that day; days with no trades are inert
 - Days with no trades are shown but empty — no distinction between a trading day with no logged trades and a non-trading day
+- Adjacent-month days (leading/trailing grid cells) are shown greyed out and are never clickable
+- Today's date has a subtle primary-color ring indicator to orient the user
+- Month navigation: previous/next chevron buttons; a "Today" button appears when viewing any month other than the current one
+- Data is fetched for the displayed month only (not all trades) — re-fetches when the month changes
+- Active month is local React state in `CalendarPage` — navigating away and back resets to the current month
 - No week or day view in MVP — month grid only
 
 ---
