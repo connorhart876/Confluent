@@ -162,7 +162,7 @@ One section per major feature. Constraints and edge cases included.
 ### Constraints
 - All timestamps are ISO 8601 strings in UTC
 - `screenshot_path` is relative to the screenshots directory; absolute paths are never stored
-- Future tables (V2+): `session_notes`, `knowledge_base_entries`, `mistake_profiles`
+- Future tables (V2+): `knowledge_base_entries`, `mistake_profiles`
 
 ---
 

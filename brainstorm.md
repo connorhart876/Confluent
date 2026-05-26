@@ -26,12 +26,10 @@ A local Electron desktop app for ES, NQ, MES, and MNQ futures trading. The goal 
 
 | Feature | What it does | Why it's in V2 |
 |---|---|---|
-| Tradovate auto-import | Ingest fills, timestamps, and P&L directly from Tradovate CSV export or Tradovate REST API | Eliminates manual entry friction for execution data — Tradovate is the active broker |
-| Session notes log | Daily session note entry: HTF bias going in, what you saw, what you did, emotional state | Feeds the review engine with context beyond raw trade data |
-| AI post-trade review | After logging a trade, Claude analyzes it against your Strategy Rules Editor definitions and produces a written summary: what you did well, which rules were violated, and why each violation matters technically | First real AI value — rule adherence feedback in plain language on every trade |
-| In-app strategy knowledge base | Dedicated section inside the app to write, organize, and reference strategy notes — no external tool dependency. AI reads this knowledge base when reviewing trades | Grounds AI output in your defined system without requiring a separate tool |
-| YouTube transcript processor | Paste a YouTube URL, app pulls the transcript, Claude condenses it into a structured strategy note saved directly to the in-app knowledge base | Populates the strategy knowledge base efficiently from educational content |
-| Improved UI | Cleaner layout, better trade entry flow, dashboard with weekly performance summary | V1 can be rough — V2 is something you want to open daily |
+| Tradovate auto-import | Ingest fills, timestamps, and P&L directly from Tradovate CSV export or Tradovate REST API; auto-imported trades enter a review queue before being confirmed to the main log | Eliminates manual entry friction for execution data — Tradovate is the active broker |
+| Strategy knowledge base | Structured in-app section for writing and organizing strategy notes — entry model, HTF context requirements, setup-specific rules, known mistakes. AI reads this alongside the Strategy Rules Editor when reviewing trades | Gives Claude the full picture of your system so post-trade review is accurate rather than generic |
+| AI post-trade review | After a trade is logged, Claude analyzes it against your Strategy Rules Editor definitions and strategy knowledge base; produces a written summary of what was done well, what was violated, and why each violation matters technically | First real AI value — rule adherence feedback in plain language on every trade |
+| Improved UI | New layout: Dashboard as home page (stats + calendar + recent trades), Add Trade as a sidebar action button, Trade View for single-trade detail, standalone Log Viewer and Calendar pages removed | V1 can be rough — V2 is something you want to open daily |
 
 ---
 

@@ -265,10 +265,9 @@ The Anthropic API key is stored via Electron's `safeStorage` API, which uses the
 
 | Dependency | When | Purpose | Internet Required |
 |---|---|---|---|
-| Anthropic API | V2+ | Post-trade AI review, transcript processing, mistake synthesis | Yes |
+| Anthropic API | V2+ | Post-trade AI review, mistake synthesis | Yes |
 | Tradovate API/CSV | V2+ | Auto-import trade fills and P&L | Yes (API) / No (CSV) |
 | Data feed provider | V3 | Real-time OHLCV for ES, NQ, MES, MNQ | Yes |
-| YouTube transcript | V2 | Extract video transcripts for knowledge base | Yes |
 
 **MVP has zero external dependencies.** The app is fully offline-capable at MVP.
 
@@ -295,9 +294,8 @@ These are deferred to V2 or later — not in MVP:
 |---|---|
 | AI post-trade review | V2 |
 | Tradovate auto-import | V2 |
-| Session notes log | V2 |
-| In-app strategy knowledge base | V2 |
-| YouTube transcript processor | V2 |
+| Strategy knowledge base | V2 |
+| Improved UI (dashboard, Trade View, new sidebar) | V2 |
 | Mistake profile synthesis | V3 |
 | Real-time OHLCV feed | V3 |
 | Autonomous structure detection | V3 |
@@ -370,16 +368,34 @@ MVP is validated by completing the above checklist through manual testing. No sp
 
 This section is not part of the MVP scope. It is included so that MVP architectural decisions can be informed by what comes next.
 
-### V2 — AI Post-Trade Review
+### V2 — Tradovate Import, Strategy Knowledge Base, AI Review, Improved UI
 
+**Tradovate auto-import:**
+- Tradovate CSV import (initial), REST API auto-sync (enhancement)
+- Auto-imported trades enter a **review queue** — not logged directly. The user reviews each trade, adds setup type, notes, and screenshot, then explicitly confirms before saving to the main log. This keeps the user engaged with the journaling process even when execution data is pulled automatically.
+
+**Strategy knowledge base:**
+- Structured in-app section for writing and organizing strategy notes (entry model, HTF context requirements, setup-specific rules, known mistakes)
+- AI reads the knowledge base alongside the Strategy Rules Editor when reviewing trades — gives Claude the full picture of the trading system so post-trade feedback is accurate rather than generic
+- Stored in a new `knowledge_base_entries` table (V2 schema migration)
+
+**AI post-trade review:**
 - Anthropic API integration via `@anthropic-ai/sdk`
-- API key stored in OS credential store via Electron `safeStorage`
-- Claude Sonnet 4.6 analyzes each trade against the Strategy Rules Editor definitions
-- Output: written summary of what was done well, what was violated, and why each violation matters
-- Prompt caching on strategy rules + knowledge base context to reduce API cost
-- Tradovate CSV import (initial), REST API auto-sync (enhancement) with review-before-logging queue
-- In-app strategy knowledge base
-- YouTube transcript extraction and AI summarization into knowledge base
+- API key stored in OS credential store via Electron `safeStorage` → Windows Credential Manager
+- Claude Sonnet 4.6 analyzes each trade against the Strategy Rules Editor definitions and strategy knowledge base
+- Output: written summary of what was done well, what was violated, and why each violation matters technically
+- Prompt caching on strategy rules and knowledge base context to reduce API cost
+
+**Improved UI — V2 layout:**
+
+The V2 UI is a full redesign. The standalone Log Viewer and Calendar pages from MVP are removed; their functionality is absorbed into a new Dashboard home page.
+
+*Sidebar navigation:*
+- **Add Trade** — styled as a distinct action button (not a nav link); opens the trade entry form page; returns to Dashboard after submit
+- **Dashboard** — default home page; stats summary (win rate, total trades, total P&L) across the top; calendar below the stats; recent trades list to the right of the calendar
+- **Trade View** — full detail for a single trade; navigated to by clicking any trade anywhere in the app (not a list — one trade at a time)
+- **Strategy Rules** — unchanged from MVP
+- **Settings** — unchanged from MVP
 
 ### V3 — Mistake Engine + Live Assistant
 
@@ -387,7 +403,3 @@ This section is not part of the MVP scope. It is included so that MVP architectu
 - Custom TypeScript module for structure detection: FVGs, OBs, swing points, structure breaks, session highs/lows, CE levels
 - Live rules layer checking detected conditions against Strategy Rules Editor
 - AI scenario narration and mistake overlay
-
-### Tradovate Auto-Import Review Queue (V2)
-
-Auto-imported trades from Tradovate enter a **review queue** — they are not logged directly. The user reviews each auto-imported trade, adds required context (setup type, notes, screenshot), and explicitly confirms before the trade is saved to the main trade log. This ensures the user remains engaged with the journaling process even when execution data is pulled automatically.

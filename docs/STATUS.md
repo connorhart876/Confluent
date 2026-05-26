@@ -71,8 +71,8 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 
 | Milestone | Summary |
 |---|---|
-| **MVP** | Manual trade journal, strategy rules editor, offline-only — in progress |
-| **V2** | First AI layer: Claude post-trade review, Tradovate import, in-app strategy knowledge base |
+| **MVP** | Manual trade journal, strategy rules editor, offline-only — complete |
+| **V2** | Tradovate auto-import, strategy knowledge base, AI post-trade review, improved UI (dashboard, Trade View, new sidebar) |
 | **V3** | Live assistant: real-time OHLCV feed, autonomous structure detection, mistake profile overlay |
 
 ---
@@ -83,9 +83,8 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 |---|---|
 | AI post-trade review | V2 |
 | Tradovate auto-import (CSV and REST API) | V2 |
-| Session notes log | V2 |
-| In-app strategy knowledge base | V2 |
-| YouTube transcript processor | V2 |
+| Strategy knowledge base | V2 |
+| Improved UI (dashboard, Trade View, new sidebar) | V2 |
 | Mistake profile synthesis | V3 |
 | Real-time OHLCV feed | V3 |
 | Autonomous structure detection (FVGs, OBs, swing points, etc.) | V3 |

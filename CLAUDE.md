@@ -125,7 +125,7 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 - `setup_type_id` in trades is a FK — cannot delete a setup_type referenced by any trade (block deletion, suggest rename)
 - `strategy_rules.setup_type_id` is unique — exactly one rules definition per setup type
 - Screenshot paths are relative to the app's screenshots directory
-- Future tables (V2+): `session_notes`, `knowledge_base_entries`, `mistake_profiles`
+- Future tables (V2+): `knowledge_base_entries`, `mistake_profiles`
 
 ## Design / UX Constraints
 
