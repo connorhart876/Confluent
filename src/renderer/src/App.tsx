@@ -4,7 +4,7 @@ import { TradeLoggerPage } from '@renderer/pages/trade-logger-page'
 import { LogViewerPage } from '@renderer/pages/log-viewer-page'
 import { SettingsPage } from '@renderer/pages/settings-page'
 import { StrategyRulesPage } from '@renderer/pages/strategy-rules-page'
-import { PlaceholderPage } from '@renderer/pages/placeholder-page'
+import { CalendarPage } from '@renderer/pages/calendar-page'
 import { useNavigationStore, type Page } from '@renderer/stores/navigation-store'
 
 function PageRouter(): JSX.Element {
@@ -13,7 +13,7 @@ function PageRouter(): JSX.Element {
   const pages: Record<Page, JSX.Element> = {
     'trade-logger': <TradeLoggerPage />,
     'log-viewer': <LogViewerPage />,
-    'calendar': <PlaceholderPage name="calendar" />,
+    'calendar': <CalendarPage />,
     'strategy-rules': <StrategyRulesPage />,
     'settings': <SettingsPage />
   }
