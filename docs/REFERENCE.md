@@ -87,8 +87,8 @@ One section per major feature. Constraints and edge cases included.
 ## P&L Validation
 
 - P&L is entered manually — no auto-calculation from prices in MVP (contract multipliers and fees vary and would require additional configuration)
-- **Sign check:** if direction is Long and exit > entry, P&L must be positive; if exit < entry, P&L must be negative. Inverse for Short. A contradicting sign shows a warning and requires explicit confirmation before saving — it does not block submission (partial fills and fees may legitimately cause contradictions)
-- **Zero check:** P&L of exactly $0.00 with outcome set to Win or Loss triggers a suggestion to use Breakeven instead — does not block submission
+- **Sign check:** if direction is Long and exit > entry, P&L must be positive; if exit < entry, P&L must be negative. Inverse for Short. A contradicting sign opens a modal dialog ("P&L Warning") with "Go Back" and "Proceed Anyway" buttons — it does not block submission (partial fills and fees may legitimately cause contradictions). The check runs after zod validation passes, before the IPC call.
+- **Zero check:** P&L of exactly $0.00 with outcome set to Win or Loss shows an inline amber warning in the outcome field area with a "Change" button that sets outcome to Breakeven in one click — does not block submission. The warning appears reactively as the user types; it is not shown until both pnl and outcome have been set.
 - Both warnings are advisory — the user can override and save as entered
 
 ---

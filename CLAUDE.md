@@ -26,9 +26,14 @@ Confluent is a **local Electron desktop app** for futures trading discipline. It
 | ORM | drizzle-orm | ^0.43.1 | Type-safe queries; `drizzle-orm/better-sqlite3` adapter |
 | Migrations | drizzle-kit | ^0.30.4 | Generates SQL migration files; applied at app startup |
 | Forms | react-hook-form | ^7.54.2 | Renderer only |
+| Form validation bridge | @hookform/resolvers | ^3.x | Connects zod schemas to react-hook-form |
 | Validation | zod | ^3.24.2 | Schema validation for IPC payloads and forms |
 | Dates | date-fns | ^4.1.0 | Date formatting and arithmetic |
 | CSS utilities | clsx + tailwind-merge | ^2.1.1 / ^2.6.0 | Powers the `cn()` helper used by Shadcn components |
+| CSS variants | class-variance-authority | ^0.7.x | Variant utility used by Shadcn components |
+| Animation | tailwindcss-animate | ^1.x | Tailwind plugin for Radix UI entry/exit animations |
+| Icons | lucide-react | ^0.x | Icon set used throughout the UI |
+| Radix UI primitives | @radix-ui/react-slot, react-label, react-select, react-toggle-group, react-dialog, react-toast | (various) | Accessibility primitives underlying Shadcn components |
 | AI SDK (V2+) | @anthropic-ai/sdk | — | **Not installed in MVP** |
 
 ### Native Module Setup

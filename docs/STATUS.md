@@ -15,16 +15,16 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 ## MVP Checklist
 
 ### Trade Logger
-- [ ] Can open the app and see the trade entry form
-- [ ] All required fields are present: instrument, direction, entry price, exit price, entry time, exit time, session, setup type, outcome, P&L, notes
-- [ ] All fields are required — form does not submit with blanks
-- [ ] P&L sign is validated against direction and price — contradiction triggers a warning
-- [ ] P&L of $0.00 with Win or Loss outcome triggers a Breakeven suggestion
-- [ ] Can paste a chart screenshot from clipboard (Ctrl+V)
-- [ ] Can drag-and-drop an image file onto the form
+- [x] Can open the app and see the trade entry form
+- [x] All required fields are present: instrument, direction, entry price, exit price, entry time, exit time, session, setup type, outcome, P&L, notes
+- [x] All fields are required — form does not submit with blanks
+- [x] P&L sign is validated against direction and price — contradiction triggers a warning
+- [x] P&L of $0.00 with Win or Loss outcome triggers a Breakeven suggestion
+- [x] Can paste a chart screenshot from clipboard (Ctrl+V)
+- [x] Can drag-and-drop an image file onto the form
 - [ ] Screenshot is saved to disk using the {date}_{trade_id}.png convention and displays in the detail view
-- [ ] Submitting the form saves the trade to SQLite and clears the form for next entry
-- [ ] When entering multiple trades in sequence, instrument and session carry over from the previous entry
+- [x] Submitting the form saves the trade to SQLite and clears the form for next entry
+- [x] When entering multiple trades in sequence, instrument and session carry over from the previous entry
 
 ### Setup Taxonomy
 - [ ] Can navigate to settings and add a new setup type label
@@ -53,10 +53,10 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [ ] Clicking a date navigates to that day's trades in the log viewer
 
 ### General
-- [ ] App launches on Windows 10/11 without errors
-- [ ] Minimum window size enforced at 1280 × 800 px
-- [ ] Data persists across app restarts
-- [ ] App works fully offline (no internet required)
+- [x] App launches on Windows 10/11 without errors
+- [x] Minimum window size enforced at 1280 × 800 px
+- [x] Data persists across app restarts
+- [x] App works fully offline (no internet required)
 - [x] Missing screenshot directory is created automatically on startup
 - [ ] Corrupted database shows an error screen with recovery instructions rather than crashing silently
 
