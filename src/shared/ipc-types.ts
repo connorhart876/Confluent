@@ -54,4 +54,9 @@ export type StrategyRulesChannels = {
   ]
 }
 
-export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels
+// screenshot channels
+export type ScreenshotChannels = {
+  'screenshot:load': [{ filename: string }, IpcResult<string | null>]
+}
+
+export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels
