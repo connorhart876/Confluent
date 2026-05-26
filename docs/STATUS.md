@@ -8,7 +8,7 @@ _Update this file as work completes. Check off items as they pass manual verific
 
 A fully offline manual trade journal with user-defined strategy rules — no AI, no broker integration, no external dependencies.
 
-**Status:** In progress
+**Status:** Complete
 
 ---
 
@@ -22,7 +22,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] P&L of $0.00 with Win or Loss outcome triggers a Breakeven suggestion
 - [x] Can paste a chart screenshot from clipboard (Ctrl+V)
 - [x] Can drag-and-drop an image file onto the form
-- [ ] Screenshot is saved to disk using the {date}_{trade_id}.png convention and displays in the detail view
+- [x] Screenshot is saved to disk using the {date}_{trade_id}.png convention and displays in the detail view
 - [x] Submitting the form saves the trade to SQLite and clears the form for next entry
 - [x] When entering multiple trades in sequence, instrument and session carry over from the previous entry
 
@@ -58,7 +58,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Data persists across app restarts
 - [x] App works fully offline (no internet required)
 - [x] Missing screenshot directory is created automatically on startup
-- [ ] Corrupted database shows an error screen with recovery instructions rather than crashing silently
+- [x] Corrupted database shows an error screen with recovery instructions rather than crashing silently
 
 ### Infrastructure (completed pre-feature)
 - [x] Initial Drizzle migration generated (`drizzle/migrations/0000_lethal_magdalene.sql`)
