@@ -31,6 +31,7 @@ Releases follow [Semantic Versioning](https://semver.org). Categories per releas
 - 2026-05-25 | `src/shared/ipc-types.ts` updated to re-export `Trade`, `SetupType`, `StrategyRules` | Renderer can import DB types via `@shared/ipc-types` without crossing into the main process source tree
 - 2026-05-25 | `tsconfig.web.json` updated to include `src/main/db/schema.ts` | Resolves the import chain for `ipc-types.ts` without duplicating type definitions; schema file is type-only in the renderer context
 - 2026-05-25 | New dependencies: `@hookform/resolvers`, `class-variance-authority`, `tailwindcss-animate`, `lucide-react`, `@radix-ui/react-slot`, `@radix-ui/react-label`, `@radix-ui/react-select`, `@radix-ui/react-toggle-group`, `@radix-ui/react-dialog`, `@radix-ui/react-toast` | UI primitive and utility packages required by the Shadcn component library and Trade Logger form
+- 2026-05-25 | `SettingsPage` and `SetupTypeList` (`src/renderer/src/pages/settings-page.tsx`, `src/renderer/src/components/settings/setup-type-list.tsx`) | Settings page with full setup type CRUD: add (text input + Add button), inline rename (pencil icon → input, Enter/Escape), delete (immediate for unreferenced types; error toast with blocking message for referenced types); 50-character name limit enforced client-side; empty-state message when no types exist
 
 ### Changed
 

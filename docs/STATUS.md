@@ -27,11 +27,11 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] When entering multiple trades in sequence, instrument and session carry over from the previous entry
 
 ### Setup Taxonomy
-- [ ] Can navigate to settings and add a new setup type label
-- [ ] Can rename an existing setup type label
-- [ ] Attempting to delete a setup type referenced by existing trades is blocked with an explanatory message
-- [ ] Deleting a setup type with zero trade references succeeds immediately
-- [ ] Setup type labels appear in the trade logger dropdown
+- [x] Can navigate to settings and add a new setup type label
+- [x] Can rename an existing setup type label
+- [x] Attempting to delete a setup type referenced by existing trades is blocked with an explanatory message
+- [x] Deleting a setup type with zero trade references succeeds immediately
+- [x] Setup type labels appear in the trade logger dropdown
 
 ### Strategy Rules Editor
 - [ ] Can select a setup type and open its rules editor
