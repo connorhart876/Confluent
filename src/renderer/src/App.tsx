@@ -2,6 +2,7 @@ import { Layout } from '@renderer/components/layout/layout'
 import { Toaster } from '@renderer/components/ui/toaster'
 import { TradeLoggerPage } from '@renderer/pages/trade-logger-page'
 import { SettingsPage } from '@renderer/pages/settings-page'
+import { StrategyRulesPage } from '@renderer/pages/strategy-rules-page'
 import { PlaceholderPage } from '@renderer/pages/placeholder-page'
 import { useNavigationStore, type Page } from '@renderer/stores/navigation-store'
 
@@ -12,7 +13,7 @@ function PageRouter(): JSX.Element {
     'trade-logger': <TradeLoggerPage />,
     'log-viewer': <PlaceholderPage name="log-viewer" />,
     'calendar': <PlaceholderPage name="calendar" />,
-    'strategy-rules': <PlaceholderPage name="strategy-rules" />,
+    'strategy-rules': <StrategyRulesPage />,
     'settings': <SettingsPage />
   }
 
