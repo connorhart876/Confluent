@@ -40,12 +40,12 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Rules are persisted to SQLite and survive app restart
 
 ### Trade Log Viewer
-- [ ] All logged trades appear in a table with columns: date, instrument, direction, session, setup type, outcome, P&L
-- [ ] Can sort by any column (ascending/descending)
-- [ ] Can filter by: instrument, session, setup type, outcome, date range
-- [ ] Stats panel shows: win rate, total trades, total P&L — reflecting current filters
-- [ ] Clicking a trade row opens the full detail view with screenshot
-- [ ] Missing screenshot shows placeholder, not an error
+- [x] All logged trades appear in a table with columns: date, instrument, direction, session, setup type, outcome, P&L
+- [x] Can sort by any column (ascending/descending)
+- [x] Can filter by: instrument, session, setup type, outcome, date range
+- [x] Stats panel shows: win rate, total trades, total P&L — reflecting current filters
+- [x] Clicking a trade row opens the full detail view with screenshot
+- [x] Missing screenshot shows placeholder, not an error
 
 ### Calendar View
 - [ ] A calendar displays trades by date

@@ -33,7 +33,8 @@ Confluent is a **local Electron desktop app** for futures trading discipline. It
 | CSS variants | class-variance-authority | ^0.7.x | Variant utility used by Shadcn components |
 | Animation | tailwindcss-animate | ^1.x | Tailwind plugin for Radix UI entry/exit animations |
 | Icons | lucide-react | ^0.x | Icon set used throughout the UI |
-| Radix UI primitives | @radix-ui/react-slot, react-label, react-select, react-toggle-group, react-dialog, react-toast | (various) | Accessibility primitives underlying Shadcn components |
+| Radix UI primitives | @radix-ui/react-slot, react-label, react-select, react-toggle-group, react-dialog, react-toast, @radix-ui/react-popover | (various) | Accessibility primitives underlying Shadcn components |
+| Calendar | react-day-picker | ^10.0.1 | Used by Shadcn Calendar component in Log Viewer date filter |
 | AI SDK (V2+) | @anthropic-ai/sdk | — | **Not installed in MVP** |
 
 ### Native Module Setup

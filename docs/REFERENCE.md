@@ -46,11 +46,11 @@ One section per major feature. Constraints and edge cases included.
 ## Trade Log Viewer
 
 - Sortable, filterable table of all logged trades
-- Columns: date, instrument, direction, session, setup type, outcome, P&L — with notes truncated in the table row
-- Filters: instrument, session, setup type, outcome, date range — combinable, all active simultaneously
-- Sort: any column, ascending or descending, one column at a time
-- Stats panel shows win rate, total trade count, and total P&L — recalculates to reflect active filters, not the full dataset
-- Clicking a trade row opens a detail view with all fields and the screenshot (or placeholder if file is missing)
+- Columns: date, instrument, direction, session, setup type, outcome (displayed as a badge), P&L (color-coded: green for positive, red for negative) — with notes truncated in the table row
+- Filters: instrument, session, setup type, outcome, date range — combinable, all active simultaneously; date range uses a calendar picker popover; filter state persists during the session (navigating away and back retains active filters)
+- Sort: any column, ascending or descending, one column at a time; sort is client-side (no additional IPC call); default is entry time descending (newest first)
+- Stats panel shows win rate, total trade count, and total P&L — recalculates to reflect active filters, not the full dataset; win rate shows "--" when no trades match
+- Clicking a trade row opens a detail modal with all fields and the screenshot (or a "Screenshot not found" placeholder if the file is missing)
 - No inline editing from the log viewer in MVP — trades are edited by opening the detail view (TBD if edit is in MVP scope)
 
 ---

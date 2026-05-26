@@ -143,7 +143,7 @@ All channels use `domain:action` format:
 | `trade` | `create`, `update`, `delete`, `list`, `get` |
 | `setup-type` | `create`, `update`, `delete`, `list` |
 | `strategy-rules` | `get`, `upsert` |
-| `screenshot` | `save`, `delete` |
+| `screenshot` | `load` |
 
 ### Typed Channels
 
@@ -278,10 +278,9 @@ Zustand manages **UI state only** — things that don't need to be persisted and
 |---|---|---|
 | `navigation-store.ts` | `activePage: Page` | Tracks the active sidebar page; defaults to `'trade-logger'` |
 | `trade-form-store.ts` | `lastInstrument`, `lastSession` | Persists instrument and session across consecutive form submissions for batch entry carry-over |
+| `log-viewer-store.ts` | `filters`, `sortColumn`, `sortDirection`, `selectedTradeId` | Log Viewer filter state (instrument, session, setup type, outcome, date range), active sort column and direction, and the ID of the trade open in the detail modal; filter state persists across in-session navigations |
 
 **Planned (not yet implemented):**
-- Log Viewer filter/sort state
-- Selected trade in detail view
 - Active month in Calendar View
 
 Zustand stores do **not** cache database results. Every view fetches its data via IPC when it mounts or when the user triggers an action. There is no client-side data cache in MVP.
@@ -289,6 +288,8 @@ Zustand stores do **not** cache database results. Every view fetches its data vi
 ### Shadcn/ui Components
 
 Shadcn/ui components are copied into the project source tree (not imported from a package). They live in `src/renderer/src/components/ui/` and are owned source code — customizable by editing directly. Radix UI primitives handle accessibility and keyboard behavior underneath.
+
+**Components present:** `Button`, `Input`, `Textarea`, `Label`, `Select`, `ToggleGroup`, `Toggle`, `Dialog`, `Toast`/`Toaster`/`useToast`, `Form`, `Table`, `Badge`, `Popover`, `Calendar`
 
 ---
 
