@@ -1,3 +1,17 @@
+export const KB_CATEGORIES = [
+  'HTF Bias & Draw on Liquidity',
+  'Session Context',
+  'The Three Models',
+  'Entry Criteria & IFVG Rules',
+  'Hard No-Trade Rules',
+  'Stop Loss & Invalidation Logic',
+  'Take Profit & Trade Management',
+  'Session Management & Re-Entry Rules',
+  'Known Mistakes & Patterns'
+] as const
+
+export type KbCategory = (typeof KB_CATEGORIES)[number]
+
 export const instruments = ['ES', 'NQ', 'MES', 'MNQ'] as const
 export const directions = ['Long', 'Short'] as const
 export const sessions = ['NY AM', 'Asian'] as const

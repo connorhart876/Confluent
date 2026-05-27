@@ -62,6 +62,16 @@ export const pendingImports = sqliteTable('pending_imports', {
   updatedAt: text('updated_at').notNull()
 })
 
+export const knowledgeBaseEntries = sqliteTable('knowledge_base_entries', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  category: text('category'),
+  setupTypeId: integer('setup_type_id').references(() => setupTypes.id),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull()
+})
+
 export type Trade = typeof trades.$inferSelect
 export type NewTrade = typeof trades.$inferInsert
 export type SetupType = typeof setupTypes.$inferSelect
@@ -70,3 +80,5 @@ export type StrategyRules = typeof strategyRules.$inferSelect
 export type NewStrategyRules = typeof strategyRules.$inferInsert
 export type PendingImport = typeof pendingImports.$inferSelect
 export type NewPendingImport = typeof pendingImports.$inferInsert
+export type KnowledgeBaseEntry = typeof knowledgeBaseEntries.$inferSelect
+export type NewKnowledgeBaseEntry = typeof knowledgeBaseEntries.$inferInsert

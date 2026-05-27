@@ -33,6 +33,13 @@ const api = {
     update: (payload: unknown) => invoke('import:update', payload),
     confirm: (payload: { id: number }) => invoke('import:confirm', payload),
     reject: (payload: { id: number }) => invoke('import:reject', payload)
+  },
+  knowledgeBase: {
+    list: (payload?: unknown) => invoke('knowledge-base:list', payload),
+    get: (payload: { id: number }) => invoke('knowledge-base:get', payload),
+    create: (payload: unknown) => invoke('knowledge-base:create', payload),
+    update: (payload: unknown) => invoke('knowledge-base:update', payload),
+    delete: (payload: { id: number }) => invoke('knowledge-base:delete', payload)
   }
 }
 
