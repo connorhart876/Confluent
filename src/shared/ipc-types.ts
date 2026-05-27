@@ -1,6 +1,6 @@
-import type { Trade, NewTrade, SetupType, StrategyRules } from '../main/db/schema'
+import type { Trade, NewTrade, SetupType, StrategyRules, PendingImport } from '../main/db/schema'
 
-export type { Trade, SetupType, StrategyRules }
+export type { Trade, SetupType, StrategyRules, PendingImport }
 
 // Generic IPC response envelope
 export type IpcOk<T> = { success: true; data: T }
@@ -59,4 +59,35 @@ export type ScreenshotChannels = {
   'screenshot:load': [{ filename: string }, IpcResult<string | null>]
 }
 
-export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels
+// import channels
+export interface PendingImportEnqueuePayload {
+  instrument: string
+  direction: string
+  entryPrice: number
+  exitPrice: number
+  entryTime: string
+  exitTime: string
+  quantity: number
+  pnl: number
+  outcome: string
+}
+
+export interface PendingImportUpdatePayload {
+  id: number
+  session?: string | null
+  setupTypeId?: number | null
+  notes?: string | null
+  screenshotPath?: string | null
+  screenshotData?: string
+}
+
+export type ImportChannels = {
+  'import:enqueue': [PendingImportEnqueuePayload[], IpcResult<PendingImport[]>]
+  'import:list': [void, IpcResult<PendingImport[]>]
+  'import:get': [{ id: number }, IpcResult<PendingImport>]
+  'import:update': [PendingImportUpdatePayload, IpcResult<PendingImport>]
+  'import:confirm': [{ id: number }, IpcResult<Trade>]
+  'import:reject': [{ id: number }, IpcResult<void>]
+}
+
+export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels & ImportChannels

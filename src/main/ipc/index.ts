@@ -7,6 +7,14 @@ import { trades, setupTypes, strategyRules } from '../db/schema'
 import type { IpcResult, TradeCreatePayload } from '../../shared/ipc-types'
 import { computePnl, deriveOutcome } from '../../shared/constants'
 import type { Instrument, Direction } from '../../shared/constants'
+import {
+  handleImportEnqueue,
+  handleImportList,
+  handleImportGet,
+  handleImportUpdate,
+  handleImportConfirm,
+  handleImportReject
+} from './import-handlers'
 
 function ok<T>(data: T): IpcResult<T> {
   return { success: true, data }
@@ -348,6 +356,17 @@ export function registerHandlers(): void {
       return err(e instanceof Error ? e.message : 'Unknown error')
     }
   })
+
+  // ── screenshots ───────────────────────────────────────────────────────────
+
+  // ── imports ───────────────────────────────────────────────────────────────
+
+  ipcMain.handle('import:enqueue', (_e, payload) => handleImportEnqueue(db, payload))
+  ipcMain.handle('import:list', () => handleImportList(db))
+  ipcMain.handle('import:get', (_e, payload) => handleImportGet(db, payload))
+  ipcMain.handle('import:update', (_e, payload) => handleImportUpdate(db, screenshotsPath, payload))
+  ipcMain.handle('import:confirm', (_e, payload) => handleImportConfirm(db, payload))
+  ipcMain.handle('import:reject', (_e, payload) => handleImportReject(db, screenshotsPath, payload))
 
   // ── screenshots ───────────────────────────────────────────────────────────
 
