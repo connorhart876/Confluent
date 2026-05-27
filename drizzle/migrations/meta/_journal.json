@@ -15,6 +15,13 @@
       "when": 1779847616193,
       "tag": "0001_jazzy_northstar",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1779896581329,
+      "tag": "0002_chilly_freak",
+      "breakpoints": true
     }
   ]
 }

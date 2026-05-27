@@ -25,6 +25,14 @@ const api = {
   },
   screenshot: {
     load: (payload: { filename: string }) => invoke('screenshot:load', payload)
+  },
+  import: {
+    enqueue: (payload: unknown) => invoke('import:enqueue', payload),
+    list: () => invoke('import:list'),
+    get: (payload: { id: number }) => invoke('import:get', payload),
+    update: (payload: unknown) => invoke('import:update', payload),
+    confirm: (payload: { id: number }) => invoke('import:confirm', payload),
+    reject: (payload: { id: number }) => invoke('import:reject', payload)
   }
 }
 
