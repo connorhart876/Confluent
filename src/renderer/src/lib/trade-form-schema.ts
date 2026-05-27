@@ -1,9 +1,8 @@
 import { z } from 'zod'
+import { instruments, directions, sessions } from '@shared/constants'
 
-export const instruments = ['ES', 'NQ', 'MES', 'MNQ'] as const
-export const directions = ['Long', 'Short'] as const
-export const sessions = ['NY AM', 'Asian'] as const
-export const outcomes = ['Win', 'Loss', 'Breakeven'] as const
+export { instruments, directions, sessions } from '@shared/constants'
+export { outcomes } from '@shared/constants'
 
 export const tradeFormSchema = z.object({
   instrument: z.enum(instruments, { required_error: 'Select an instrument' }),
@@ -21,8 +20,10 @@ export const tradeFormSchema = z.object({
     .number({ required_error: 'Select a setup type', invalid_type_error: 'Select a setup type' })
     .int()
     .positive('Select a setup type'),
-  outcome: z.enum(outcomes, { required_error: 'Select an outcome' }),
-  pnl: z.number({ required_error: 'Enter P&L', invalid_type_error: 'Must be a number' }),
+  quantity: z
+    .number({ required_error: 'Enter quantity', invalid_type_error: 'Must be a number' })
+    .int('Must be a whole number')
+    .positive('Must be at least 1'),
   notes: z.string().min(1, 'Enter notes')
 })
 

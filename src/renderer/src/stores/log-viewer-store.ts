@@ -9,7 +9,7 @@ export interface LogViewerFilters {
   dateTo: Date | null
 }
 
-export type SortColumn = 'entryTime' | 'instrument' | 'direction' | 'session' | 'setupType' | 'outcome' | 'pnl'
+export type SortColumn = 'entryTime' | 'instrument' | 'direction' | 'session' | 'setupType' | 'quantity' | 'outcome' | 'pnl'
 
 const defaultFilters: LogViewerFilters = {
   instrument: null,

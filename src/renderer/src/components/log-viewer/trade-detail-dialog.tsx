@@ -97,6 +97,7 @@ export function TradeDetailDialog({ tradeId, setupTypeMap, onClose }: TradeDetai
               <DetailRow label="Session" value={trade.session} />
               <DetailRow label="Entry Price" value={trade.entryPrice.toString()} />
               <DetailRow label="Exit Price" value={trade.exitPrice.toString()} />
+              <DetailRow label="Contracts" value={trade.quantity.toString()} />
               <div className="flex flex-col gap-0.5">
                 <span className="text-xs text-muted-foreground">Outcome</span>
                 <Badge variant={outcomeVariant(trade.outcome)} className="w-fit">{trade.outcome}</Badge>

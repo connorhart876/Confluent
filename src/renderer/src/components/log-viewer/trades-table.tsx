@@ -29,6 +29,7 @@ const columns: { key: SortColumn; label: string }[] = [
   { key: 'direction', label: 'Direction' },
   { key: 'session', label: 'Session' },
   { key: 'setupType', label: 'Setup Type' },
+  { key: 'quantity', label: 'Qty' },
   { key: 'outcome', label: 'Outcome' },
   { key: 'pnl', label: 'P&L' }
 ]
@@ -86,6 +87,7 @@ export function TradesTable({ trades, setupTypeMap }: TradesTableProps): JSX.Ele
                 <TableCell>{trade.direction}</TableCell>
                 <TableCell>{trade.session}</TableCell>
                 <TableCell>{setupTypeMap.get(trade.setupTypeId) ?? 'Unknown'}</TableCell>
+                <TableCell className="tabular-nums">{trade.quantity}</TableCell>
                 <TableCell>
                   <Badge variant={outcomeVariant(trade.outcome)}>{trade.outcome}</Badge>
                 </TableCell>

@@ -16,6 +16,7 @@ export const trades = sqliteTable('trades', {
   entryTime: text('entry_time').notNull(),
   exitTime: text('exit_time').notNull(),
   session: text('session').notNull(),
+  quantity: integer('quantity').notNull().default(1),
   setupTypeId: integer('setup_type_id')
     .notNull()
     .references(() => setupTypes.id),

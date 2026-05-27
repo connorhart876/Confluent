@@ -8,6 +8,13 @@
       "when": 1779717042563,
       "tag": "0000_lethal_magdalene",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1779847616193,
+      "tag": "0001_jazzy_northstar",
+      "breakpoints": true
     }
   ]
 }

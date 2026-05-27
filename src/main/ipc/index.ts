@@ -5,6 +5,8 @@ import { eq, and, gte, lte, sql } from 'drizzle-orm'
 import { db, screenshotsPath } from '../db'
 import { trades, setupTypes, strategyRules } from '../db/schema'
 import type { IpcResult, TradeCreatePayload } from '../../shared/ipc-types'
+import { computePnl, deriveOutcome } from '../../shared/constants'
+import type { Instrument, Direction } from '../../shared/constants'
 
 function ok<T>(data: T): IpcResult<T> {
   return { success: true, data }
@@ -25,6 +27,14 @@ export function registerHandlers(): void {
     try {
       const { screenshotData, ...tradeFields } = payload as TradeCreatePayload
       const ts = now()
+      const pnl = computePnl(
+        tradeFields.instrument as Instrument,
+        tradeFields.direction as Direction,
+        tradeFields.entryPrice,
+        tradeFields.exitPrice,
+        tradeFields.quantity ?? 1
+      )
+      const outcome = deriveOutcome(pnl)
 
       const [inserted] = db
         .insert(trades)
@@ -37,8 +47,9 @@ export function registerHandlers(): void {
           exitTime: tradeFields.exitTime,
           session: tradeFields.session,
           setupTypeId: tradeFields.setupTypeId,
-          outcome: tradeFields.outcome,
-          pnl: tradeFields.pnl,
+          quantity: tradeFields.quantity ?? 1,
+          outcome,
+          pnl,
           notes: tradeFields.notes,
           screenshotPath: null,
           createdAt: ts,
@@ -128,14 +139,27 @@ export function registerHandlers(): void {
         exitTime: string
         session: string
         setupTypeId: number
-        outcome: string
-        pnl: number
+        quantity: number
         notes: string
         screenshotPath: string | null
       }>
+
+      const existing = db.select().from(trades).where(eq(trades.id, id)).get()
+      if (!existing) return err(`Trade ${id} not found`)
+
+      const merged = { ...existing, ...fields }
+      const pnl = computePnl(
+        merged.instrument as Instrument,
+        merged.direction as Direction,
+        merged.entryPrice,
+        merged.exitPrice,
+        merged.quantity
+      )
+      const outcome = deriveOutcome(pnl)
+
       const [updated] = db
         .update(trades)
-        .set({ ...fields, updatedAt: now() })
+        .set({ ...fields, pnl, outcome, updatedAt: now() })
         .where(eq(trades.id, id))
         .returning()
         .all()

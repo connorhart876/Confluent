@@ -8,8 +8,8 @@ export type IpcErr = { success: false; error: string }
 export type IpcResult<T> = IpcOk<T> | IpcErr
 
 // trade channels
-export interface TradeCreatePayload extends Omit<NewTrade, 'id' | 'createdAt' | 'updatedAt'> {
-  screenshotData?: string // base64 PNG held in memory until insert
+export interface TradeCreatePayload extends Omit<NewTrade, 'id' | 'createdAt' | 'updatedAt' | 'pnl' | 'outcome'> {
+  screenshotData?: string
 }
 
 export type TradeChannels = {

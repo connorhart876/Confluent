@@ -34,6 +34,9 @@ function sortTrades(
         cmp = nameA.localeCompare(nameB)
         break
       }
+      case 'quantity':
+        cmp = a.quantity - b.quantity
+        break
       case 'outcome':
         cmp = a.outcome.localeCompare(b.outcome)
         break
