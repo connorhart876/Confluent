@@ -1,6 +1,6 @@
-import type { Trade, NewTrade, SetupType, StrategyRules, PendingImport } from '../main/db/schema'
+import type { Trade, NewTrade, SetupType, StrategyRules, PendingImport, KnowledgeBaseEntry } from '../main/db/schema'
 
-export type { Trade, SetupType, StrategyRules, PendingImport }
+export type { Trade, SetupType, StrategyRules, PendingImport, KnowledgeBaseEntry }
 
 // Generic IPC response envelope
 export type IpcOk<T> = { success: true; data: T }
@@ -90,4 +90,33 @@ export type ImportChannels = {
   'import:reject': [{ id: number }, IpcResult<void>]
 }
 
-export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels & ImportChannels
+// knowledge-base channels
+export interface KnowledgeBaseCreatePayload {
+  title: string
+  content: string
+  category?: string | null
+  setupTypeId?: number | null
+}
+
+export interface KnowledgeBaseUpdatePayload {
+  id: number
+  title?: string
+  content?: string
+  category?: string | null
+  setupTypeId?: number | null
+}
+
+export interface KnowledgeBaseListPayload {
+  category?: string
+  setupTypeId?: number
+}
+
+export type KnowledgeBaseChannels = {
+  'knowledge-base:list': [KnowledgeBaseListPayload | void, IpcResult<KnowledgeBaseEntry[]>]
+  'knowledge-base:get': [{ id: number }, IpcResult<KnowledgeBaseEntry>]
+  'knowledge-base:create': [KnowledgeBaseCreatePayload, IpcResult<KnowledgeBaseEntry>]
+  'knowledge-base:update': [KnowledgeBaseUpdatePayload, IpcResult<KnowledgeBaseEntry>]
+  'knowledge-base:delete': [{ id: number }, IpcResult<void>]
+}
+
+export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels & ImportChannels & KnowledgeBaseChannels

@@ -22,6 +22,13 @@
       "when": 1779896581329,
       "tag": "0002_chilly_freak",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1779898074356,
+      "tag": "0003_daffy_doomsday",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,7 @@ import { writeFileSync, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { eq, and, gte, lte, sql } from 'drizzle-orm'
 import { db, screenshotsPath } from '../db'
-import { trades, setupTypes, strategyRules } from '../db/schema'
+import { trades, setupTypes, strategyRules, knowledgeBaseEntries } from '../db/schema'
 import type { IpcResult, TradeCreatePayload } from '../../shared/ipc-types'
 import { computePnl, deriveOutcome } from '../../shared/constants'
 import type { Instrument, Direction } from '../../shared/constants'
@@ -15,6 +15,13 @@ import {
   handleImportConfirm,
   handleImportReject
 } from './import-handlers'
+import {
+  handleKnowledgeBaseList,
+  handleKnowledgeBaseGet,
+  handleKnowledgeBaseCreate,
+  handleKnowledgeBaseUpdate,
+  handleKnowledgeBaseDelete
+} from './knowledge-base-handlers'
 
 function ok<T>(data: T): IpcResult<T> {
   return { success: true, data }
@@ -277,6 +284,11 @@ export function registerHandlers(): void {
         )
       }
 
+      db.update(knowledgeBaseEntries)
+        .set({ setupTypeId: null, updatedAt: now() })
+        .where(eq(knowledgeBaseEntries.setupTypeId, id))
+        .run()
+
       db.delete(strategyRules).where(eq(strategyRules.setupTypeId, id)).run()
       db.delete(setupTypes).where(eq(setupTypes.id, id)).run()
       return ok(undefined)
@@ -367,6 +379,16 @@ export function registerHandlers(): void {
   ipcMain.handle('import:update', (_e, payload) => handleImportUpdate(db, screenshotsPath, payload))
   ipcMain.handle('import:confirm', (_e, payload) => handleImportConfirm(db, payload))
   ipcMain.handle('import:reject', (_e, payload) => handleImportReject(db, screenshotsPath, payload))
+
+  // ── screenshots ───────────────────────────────────────────────────────────
+
+  // ── knowledge base ─────────────────────────────────────────────────────────
+
+  ipcMain.handle('knowledge-base:list', (_e, payload) => handleKnowledgeBaseList(db, payload))
+  ipcMain.handle('knowledge-base:get', (_e, payload) => handleKnowledgeBaseGet(db, payload))
+  ipcMain.handle('knowledge-base:create', (_e, payload) => handleKnowledgeBaseCreate(db, payload))
+  ipcMain.handle('knowledge-base:update', (_e, payload) => handleKnowledgeBaseUpdate(db, payload))
+  ipcMain.handle('knowledge-base:delete', (_e, payload) => handleKnowledgeBaseDelete(db, payload))
 
   // ── screenshots ───────────────────────────────────────────────────────────
 
