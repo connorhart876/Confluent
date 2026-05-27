@@ -1,6 +1,6 @@
 # Confluent — Architecture
 
-**Scope:** MVP. References to V2/V3 are forward-context only — nothing described here is speculative for MVP.
+**Scope:** MVP complete, V2 in progress. The MVP architecture is stable. V2 additions (Tradovate import, AI review) extend the main process; the core process model and IPC patterns are unchanged.
 
 ---
 
@@ -79,6 +79,7 @@ Runs in Node.js. This is the backend of the application.
 - SQLite database (via better-sqlite3 + Drizzle ORM)
 - File system access — screenshots directory, logs, userData path
 - All IPC handlers (`ipcMain.handle`)
+- Import modules — standalone parsers (e.g., Tradovate CSV) that transform external data into app types
 - App lifecycle — window creation, startup migrations, error screens
 
 **Why Node.js only:**
@@ -144,6 +145,8 @@ All channels use `domain:action` format:
 | `setup-type` | `create`, `update`, `delete`, `list` |
 | `strategy-rules` | `get`, `upsert` |
 | `screenshot` | `load` |
+| `import` | `enqueue`, `list`, `get`, `update`, `confirm`, `reject` |
+| `knowledge-base` | `list`, `get`, `create`, `update`, `delete` |
 
 ### Typed Channels
 
@@ -196,12 +199,16 @@ This means the database schema is always up to date after startup. No manual mig
 ### Table Relationships
 
 ```
-setup_types ──< trades           (one setup_type → many trades)
-setup_types ──── strategy_rules  (one setup_type → exactly one rules record)
+setup_types ──< trades                (one setup_type → many trades)
+setup_types ──── strategy_rules       (one setup_type → exactly one rules record)
+setup_types ──< pending_imports       (optional FK — nullable)
+setup_types ──< knowledge_base_entries (optional FK — nullable)
 ```
 
 - Deleting a `setup_type` that has associated `trades` is **blocked** at the application layer (not a DB cascade). The IPC handler checks for references before proceeding.
 - `strategy_rules` records are created automatically when a new `setup_type` is saved, with all text fields initialized to empty strings.
+- `pending_imports.setup_type_id` is nullable — imported trades have no setup type assigned until the user annotates them in the review queue.
+- `knowledge_base_entries.setup_type_id` is nullable — entries can be global (not linked to a setup type) or setup-specific. When a setup type is deleted, linked entry FKs are set to null (entries are preserved, not deleted).
 
 ---
 
@@ -340,3 +347,5 @@ The MVP architecture is deliberately minimal. These decisions were made with V2/
 - **The `setup_type_id` foreign key** on `trades` is the join point for all future AI review — it links every trade to its rules definition.
 - **All IPC handlers in the main process** means adding Anthropic API calls in V2 requires no renderer changes — new handlers are registered in main alongside existing ones.
 - **No data cache in Zustand** means V2's auto-import review queue can push new trades without cache invalidation complexity.
+- **Import modules (`src/main/import/`)** are standalone — they take raw data in and return typed objects out, with no DB or IPC dependencies. The Tradovate CSV parser is the first; the review queue (future) will consume its output and call existing IPC handlers to commit trades.
+- **Shared constants (`src/shared/constants.ts`)** provide a single source of truth for instrument enums and tick value math, used by both the renderer (form validation) and main process (IPC handlers, parsers).

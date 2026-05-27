@@ -16,10 +16,10 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 
 ### Trade Logger
 - [x] Can open the app and see the trade entry form
-- [x] All required fields are present: instrument, direction, entry price, exit price, entry time, exit time, session, setup type, outcome, P&L, notes
+- [x] All required fields are present: instrument, direction, entry price, exit price, entry time, exit time, session, setup type, quantity, notes _(V2: P&L and outcome removed — auto-computed; quantity added)_
 - [x] All fields are required — form does not submit with blanks
-- [x] P&L sign is validated against direction and price — contradiction triggers a warning
-- [x] P&L of $0.00 with Win or Loss outcome triggers a Breakeven suggestion
+- [x] ~~P&L sign is validated against direction and price — contradiction triggers a warning~~ _(V2: replaced by auto-computed P&L)_
+- [x] ~~P&L of $0.00 with Win or Loss outcome triggers a Breakeven suggestion~~ _(V2: replaced by auto-derived outcome)_
 - [x] Can paste a chart screenshot from clipboard (Ctrl+V)
 - [x] Can drag-and-drop an image file onto the form
 - [x] Screenshot is saved to disk using the {date}_{trade_id}.png convention and displays in the detail view
@@ -77,12 +77,48 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 
 ---
 
+## V2 Checklist
+
+### Tradovate Auto-Import
+- [x] Tradovate CSV parser module — parses Orders CSV, pairs fills FIFO, computes P&L from tick values
+- [x] Import review queue IPC handlers — `pending_imports` schema + `import:enqueue/list/get/update/confirm/reject` channels + preload surface
+- [ ] CSV file picker UI — user selects a Tradovate export file
+- [ ] Review queue UI — parsed trades shown for user to assign session, setup type, notes before committing
+- [ ] Tradovate REST API auto-sync (enhancement)
+
+### Trade Model Updates (V2)
+- [x] `quantity` column added to trades table (migration `0001_jazzy_northstar.sql`)
+- [x] P&L auto-computed from prices, direction, instrument, and quantity (removed manual P&L entry)
+- [x] Outcome auto-derived from P&L sign (removed manual outcome selection)
+- [x] Shared constants module (`src/shared/constants.ts`) — enums and tick value map used by both form and parser
+
+### Strategy Knowledge Base
+- [x] `knowledge_base_entries` table, schema, and IPC handlers — `knowledge-base:list/get/create/update/delete` channels + preload surface; fixed category enum (9 values)
+- [ ] Knowledge base editor UI
+- [ ] AI reads knowledge base alongside strategy rules
+
+### AI Post-Trade Review
+- [ ] Anthropic API integration via `@anthropic-ai/sdk`
+- [ ] API key storage via Electron `safeStorage`
+- [ ] Post-trade review prompt with strategy rules and knowledge base context
+
+### Improved UI
+- [ ] Dashboard home page (stats + calendar + recent trades)
+- [ ] Add Trade as sidebar action button
+- [ ] Trade View for single-trade detail
+- [ ] Remove standalone Log Viewer and Calendar pages
+
+### Infrastructure (V2)
+- [x] Test runner (vitest) — 61 unit tests across parser (19), import handlers (22), knowledge-base handlers (20)
+
+---
+
 ## Deferred from MVP
 
 | Feature | Milestone |
 |---|---|
 | AI post-trade review | V2 |
-| Tradovate auto-import (CSV and REST API) | V2 |
+| Tradovate REST API auto-sync | V2 |
 | Strategy knowledge base | V2 |
 | Improved UI (dashboard, Trade View, new sidebar) | V2 |
 | Mistake profile synthesis | V3 |

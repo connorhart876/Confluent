@@ -4,7 +4,7 @@
 
 Confluent is a **local Electron desktop app** for futures trading discipline. It is a personal co-pilot that logs trades against a user-defined ruleset and enforces strategy discipline through structure — not a system that makes trading decisions.
 
-**Current scope: MVP only.** MVP is a fully offline manual trade journal with strategy rules definition. No AI, no broker integration, no external API calls.
+**Current scope: V2 in progress.** MVP (fully offline manual trade journal with strategy rules definition) is complete. V2 adds Tradovate auto-import, strategy knowledge base, AI post-trade review, and improved UI. No AI or broker API integration yet — CSV import is the first V2 feature.
 
 **What Confluent is not:**
 - Not a trading system, signal generator, or execution engine
@@ -26,7 +26,7 @@ Confluent is a **local Electron desktop app** for futures trading discipline. It
 | ORM | drizzle-orm | ^0.43.1 | Type-safe queries; `drizzle-orm/better-sqlite3` adapter |
 | Migrations | drizzle-kit | ^0.30.4 | Generates SQL migration files; applied at app startup |
 | Forms | react-hook-form | ^7.54.2 | Renderer only |
-| Form validation bridge | @hookform/resolvers | ^3.x | Connects zod schemas to react-hook-form |
+| Form validation bridge | @hookform/resolvers | ^5.4.0 | Connects zod schemas to react-hook-form |
 | Validation | zod | ^3.24.2 | Schema validation for IPC payloads and forms |
 | Dates | date-fns | ^4.1.0 | Date formatting and arithmetic |
 | CSS utilities | clsx + tailwind-merge | ^2.1.1 / ^2.6.0 | Powers the `cn()` helper used by Shadcn components |
@@ -35,7 +35,9 @@ Confluent is a **local Electron desktop app** for futures trading discipline. It
 | Icons | lucide-react | ^0.x | Icon set used throughout the UI |
 | Radix UI primitives | @radix-ui/react-slot, react-label, react-select, react-toggle-group, react-dialog, react-toast, @radix-ui/react-popover | (various) | Accessibility primitives underlying Shadcn components |
 | Calendar | react-day-picker | ^10.0.1 | Used by Shadcn Calendar component in Log Viewer date filter |
-| AI SDK (V2+) | @anthropic-ai/sdk | — | **Not installed in MVP** |
+| CSV parsing | papaparse | ^5.5.3 | Tradovate CSV import parser (V2) |
+| Testing | vitest | ^4.1.7 | Unit test runner; Vite-native, no extra config |
+| AI SDK (V2+) | @anthropic-ai/sdk | — | **Not installed yet** |
 
 ### Native Module Setup
 
@@ -83,7 +85,7 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 
 ## Data Model
 
-### Tables (MVP)
+### Tables
 
 **trades**
 - `id` INTEGER PK
@@ -93,10 +95,11 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 - `exit_price` REAL
 - `entry_time` TEXT — ISO 8601 UTC
 - `exit_time` TEXT — ISO 8601 UTC
+- `quantity` INTEGER — number of contracts (default 1)
 - `session` TEXT — enum: "NY AM", "Asian"
 - `setup_type_id` INTEGER FK → setup_types.id
-- `outcome` TEXT — enum: Win, Loss, Breakeven
-- `pnl` REAL
+- `outcome` TEXT — enum: Win, Loss, Breakeven — **auto-derived** from P&L sign
+- `pnl` REAL — **auto-computed** from prices, direction, instrument, and quantity
 - `notes` TEXT
 - `screenshot_path` TEXT — relative to screenshots dir, nullable
 - `created_at` TEXT — ISO 8601 UTC
@@ -119,13 +122,28 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 - `created_at` TEXT
 - `updated_at` TEXT
 
+**pending_imports** (V2 — import review queue staging table)
+- `id` INTEGER PK
+- `instrument`, `direction`, `entry_price`, `exit_price`, `entry_time`, `exit_time`, `quantity`, `pnl`, `outcome` — from CSV parser, NOT NULL
+- `session`, `setup_type_id` FK → setup_types.id, `notes`, `screenshot_path` — user-assigned, nullable
+- `created_at`, `updated_at` TEXT
+
+**knowledge_base_entries** (V2 — strategy knowledge base)
+- `id` INTEGER PK
+- `title` TEXT NOT NULL
+- `content` TEXT NOT NULL
+- `category` TEXT nullable — must be one of the 9 `KB_CATEGORIES` values if set
+- `setup_type_id` INTEGER FK → setup_types.id, nullable
+- `created_at`, `updated_at` TEXT
+
 ### Constraints
 
 - All timestamps are ISO 8601 strings in UTC
 - `setup_type_id` in trades is a FK — cannot delete a setup_type referenced by any trade (block deletion, suggest rename)
 - `strategy_rules.setup_type_id` is unique — exactly one rules definition per setup type
+- `knowledge_base_entries.setup_type_id` is nullable — when a setup type is deleted, linked entry FKs are nullified (entries preserved)
 - Screenshot paths are relative to the app's screenshots directory
-- Future tables (V2+): `knowledge_base_entries`, `mistake_profiles`
+- Future tables (V3+): `mistake_profiles`
 
 ## Design / UX Constraints
 
@@ -134,7 +152,7 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 - **Layout:** Fixed left sidebar (Trade Logger, Log Viewer, Calendar, Strategy Rules, Settings) + main content area
 - **Desktop-only.** No responsive layout, no mobile breakpoints, no touch optimization
 - **Batch entry flow:** instrument and session carry over between consecutive trade entries
-- **P&L validation:** sign-check against direction/price (warn, don't block); zero-check suggests Breakeven
+- **P&L auto-computed:** from entry/exit prices, direction, instrument, and quantity using known CME tick values (ES: $50/pt, NQ: $20/pt, MES: $5/pt, MNQ: $2/pt). Outcome auto-derived from P&L sign. Neither is manually entered
 - **Visual design reference:** Tradezella — clean, data-dense trade journal aesthetic with a simple dark theme. Use Tailwind's `dark:` variant throughout; no light mode required
 
 ## Project Policies
@@ -145,7 +163,7 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 - **No scoring, ratings, grades, or probability numbers anywhere.** Pass/fail rule checks are OK. Numerical quality scores, letter grades, or probability ratings on setups or executions are permanently banned
 - **No automated trade execution.** The app never places, modifies, or cancels orders
 - **No multi-user logic.** No auth, no login, no user accounts, no permissions, no sessions
-- **No P&L auto-calculation in MVP.** Contract multipliers and fee structures vary — manual entry with validation only
+- **P&L is auto-computed from V2 onward.** Uses fixed CME tick values for supported instruments. Gross P&L only — no commission or fee deduction
 
 ## Coding Standards
 
@@ -163,7 +181,7 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 
 - `main` — stable, always builds
 - `feature/<short-name>` — new feature work (e.g., `feature/trade-logger`, `feature/calendar-view`)
-- `fix/<short-name>` — bug fixes (e.g., `fix/pnl-validation`)
+- `fix/<short-name>` — bug fixes (e.g., `fix/screenshot-display`)
 - `chore/<short-name>` — tooling, config, deps (e.g., `chore/tailwind-setup`)
 - `dev` — accumulates finished issue work. Feature branches merge here.
 - Merge to `main` at milestone boundaries only. Never commit directly to main.
@@ -199,6 +217,10 @@ npm run lint             # ESLint
 # Native modules
 npm run rebuild          # Recompile better-sqlite3 for current Electron version
                          # Run this after upgrading Electron or better-sqlite3
+
+# Testing
+npm run test             # Run unit tests (vitest, single run)
+npm run test:watch       # Run unit tests in watch mode
 
 # Database
 npm run db:generate      # Generate SQL migration file from schema changes (drizzle-kit)
