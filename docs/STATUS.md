@@ -83,7 +83,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Tradovate CSV parser module — parses Orders CSV, pairs fills FIFO, computes P&L from tick values
 - [x] Import review queue IPC handlers — `pending_imports` schema + `import:enqueue/list/get/update/confirm/reject` channels + preload surface
 - [x] CSV file picker UI — `import:from-csv` IPC handler with native file dialog, parse, and enqueue; `window.api.import.fromCsv()` on preload surface
-- [ ] Review queue UI — parsed trades shown for user to assign session, setup type, notes before committing
+- [x] Review queue UI — parsed trades shown for user to assign session, setup type, notes before committing
 - [ ] Tradovate REST API auto-sync (enhancement)
 
 ### Trade Model Updates (V2)

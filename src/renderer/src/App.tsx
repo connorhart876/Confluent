@@ -4,6 +4,7 @@ import { DashboardPage } from '@renderer/pages/dashboard-page'
 import { TradeLoggerPage } from '@renderer/pages/trade-logger-page'
 import { TradeViewPage } from '@renderer/pages/trade-view-page'
 import { KnowledgeBasePage } from '@renderer/pages/knowledge-base-page'
+import { ImportReviewPage } from '@renderer/pages/import-review-page'
 import { SettingsPage } from '@renderer/pages/settings-page'
 import { StrategyRulesPage } from '@renderer/pages/strategy-rules-page'
 import { useNavigationStore, type Page } from '@renderer/stores/navigation-store'
@@ -17,6 +18,7 @@ function PageRouter(): JSX.Element {
     'trade-view': <TradeViewPage />,
     'strategy-rules': <StrategyRulesPage />,
     'knowledge-base': <KnowledgeBasePage />,
+    'import-review': <ImportReviewPage />,
     'settings': <SettingsPage />
   }
 

@@ -91,7 +91,7 @@ One section per major feature. Constraints and edge cases included.
 ## Import Review Queue (V2)
 
 - Auto-imported trades from the CSV parser never go directly into the `trades` table — they enter a `pending_imports` staging table first
-- The user must assign session, setup type (and optionally notes and a screenshot) before confirming a trade to the main log
+- The user must assign session and setup type before confirming; notes and screenshot are optional
 - **Enqueue (`import:enqueue`):** accepts an array of `ParsedTrade`-shaped objects; all user-assigned fields (`session`, `setupTypeId`, `notes`, `screenshotPath`) are initialized to null; rejects empty arrays
 - **List (`import:list`):** returns all rows in `pending_imports` — no filters in current implementation
 - **Get (`import:get`):** returns a single pending import by ID
@@ -100,6 +100,21 @@ One section per major feature. Constraints and edge cases included.
 - **Reject (`import:reject`):** deletes the pending row; if a screenshot was attached, the file is deleted from disk (missing file is not fatal)
 - Pending screenshots use the naming convention `pending_{YYYY-MM-DD}_{pending_id}.png` to distinguish them from confirmed-trade screenshots
 - No duplicate detection — re-importing the same CSV produces additional pending rows
+
+### Review Queue UI (`src/renderer/src/pages/import-review-page.tsx`)
+
+- Accessible via the "Import Review" sidebar nav item (between Dashboard and Strategy Rules); sidebar shows a count badge when the queue is non-empty
+- Header shows pending trade count and three actions: Import CSV, Bulk Reject, Bulk Confirm (Bulk actions visible only when ≥1 row selected)
+- Each pending import renders as a card (`PendingImportRow`) with two zones:
+  - **Read-only strip:** instrument, direction chip (green=Long, red=Short), entry→exit prices, timestamps, contract count, P&L (color-coded), outcome badge
+  - **Editable zone:** session Select, setup type Select, notes Textarea, screenshot attach (ScreenshotAttach component reused from trade form)
+- Editable fields sync to `pending_imports` on change — session/setup-type fire on select commit, notes on blur, screenshot immediately on attach — so partial work survives an app reload
+- Outcome is read-only (auto-derived from P&L by the parser); only session and setup type are required for confirm
+- Per-row Confirm button is disabled until both session and setup type are assigned (mirrors the `import:confirm` handler validation)
+- Per-row Reject opens a confirmation dialog before deleting; Bulk Reject also requires dialog confirmation
+- Bulk Confirm: attempts all selected rows; rows missing session or setup type are silently skipped; toast reports "Confirmed X of Y · Z skipped (missing fields)"
+- Empty state shows an Inbox icon and an "Import CSV" button — the CSV trigger is accessible even with no pending imports
+- Store (`useImportReviewStore`): Zustand store that holds `pendingImports`, `setupTypes`, `selectedIds`, and `loading`; sidebar reads `pendingImports.length` reactively for the badge without triggering a fetch
 
 ---
 
@@ -143,7 +158,7 @@ One section per major feature. Constraints and edge cases included.
 - **File import entry point** (`import:from-csv`): opens a native Electron file dialog filtered to `.csv`; reads the selected file; parses it; bulk-enqueues results; returns `ImportFromCsvResult` — `{ cancelled, filePath, enqueuedCount, parseErrors: { row, reason }[], summary }`. Preload method: `window.api.import.fromCsv()`
 - User cancelling the dialog returns `{ success: true, data: { cancelled: true, enqueuedCount: 0, parseErrors: [], summary: null } }` — not an error envelope, so the renderer can distinguish cancel from failure without special-casing an error string
 - `parseErrors` strips the `raw` row object from the parser's `RowError` — only `row` (number) and `reason` (string) are returned across IPC to keep the payload compact
-- Review queue UI (#46) is still pending — the file picker IPC layer is complete
+- Review queue UI is implemented at `src/renderer/src/pages/import-review-page.tsx` — full end-to-end flow: import CSV → annotate pending trades → confirm to main log
 
 ---
 

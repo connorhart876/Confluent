@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type Page = 'dashboard' | 'trade-logger' | 'trade-view' | 'strategy-rules' | 'knowledge-base' | 'settings'
+export type Page = 'dashboard' | 'trade-logger' | 'trade-view' | 'strategy-rules' | 'knowledge-base' | 'import-review' | 'settings'
 
 interface NavigationStore {
   activePage: Page

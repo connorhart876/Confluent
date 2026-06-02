@@ -268,13 +268,14 @@ The DB path is not user-configurable in MVP. It is always `app.getPath('userData
 
 The renderer is a standard React SPA. electron-vite handles bundling, HMR, and the build pipeline. There is no server-side rendering.
 
-**Navigation model:** A fixed left sidebar. "Add Trade" is a distinct action button at the top; below it are four nav link destinations: Dashboard (default), Strategy Rules, Knowledge Base, Settings. Trade View is a programmatic destination only — navigated to via `navigateToTrade(id)` in the navigation store, with no sidebar entry. Log Viewer and Calendar are not sidebar destinations in V2; their page components remain in the codebase for reuse by Dashboard. This is client-side routing — no URL bar, no browser history.
+**Navigation model:** A fixed left sidebar. "Add Trade" is a distinct action button at the top; below it are five nav link destinations: Dashboard (default), Import Review (with count badge when pending imports exist), Strategy Rules, Knowledge Base, Settings. Trade View is a programmatic destination only — navigated to via `navigateToTrade(id)` in the navigation store, with no sidebar entry. Log Viewer and Calendar are not sidebar destinations in V2; their page components remain in the codebase for reuse by Dashboard. This is client-side routing — no URL bar, no browser history.
 
 ### Component Areas
 
 | Area | Responsibility |
 |---|---|
 | **Dashboard** | V2 home page (placeholder). Will show stats summary, calendar, and recent trades. Default landing page on app launch. |
+| **Import Review** | V2 pending-import review page. Lists all `pending_imports` rows; lets the user assign session, setup type, notes, and screenshot to each via save-on-blur/change fields; per-row Confirm (disabled until session + setup type assigned) and Reject (confirmation dialog) buttons; bulk Confirm and Reject for selected rows with partial-success toast; empty state with inline CSV import trigger. Sidebar count badge shows queue depth when non-zero. |
 | **Add Trade** | Trade entry form (same `TradeLoggerPage` component). Reached via the "Add Trade" sidebar button. On submit: "Save" writes the trade and navigates to Dashboard; "Log another" writes the trade, stays on the form, and carries over instrument and session for batch entry. |
 | **Trade View** | V2 single-trade detail page (placeholder). Navigated to programmatically via `navigateToTrade(id)` — no sidebar link. Reads `selectedTradeId` from the navigation store. |
 | **Strategy Rules Editor** | Per-setup-type hybrid editor: four structured text fields (entry criteria, HTF confirmation, valid vs. premature entry, session filter) plus a free-text field. One record per setup type, created automatically alongside the setup type. |
@@ -291,9 +292,10 @@ Zustand manages **UI state only** — things that don't need to be persisted and
 
 | Store | State | Purpose |
 |---|---|---|
-| `navigation-store.ts` | `activePage: Page`, `selectedTradeId: number \| null` | Tracks the active page; defaults to `'dashboard'`. `navigateToTrade(id)` sets both `activePage: 'trade-view'` and `selectedTradeId` atomically. `Page` type: `'dashboard' \| 'trade-logger' \| 'trade-view' \| 'strategy-rules' \| 'knowledge-base' \| 'settings'` |
+| `navigation-store.ts` | `activePage: Page`, `selectedTradeId: number \| null` | Tracks the active page; defaults to `'dashboard'`. `navigateToTrade(id)` sets both `activePage: 'trade-view'` and `selectedTradeId` atomically. `Page` type: `'dashboard' \| 'trade-logger' \| 'trade-view' \| 'strategy-rules' \| 'knowledge-base' \| 'import-review' \| 'settings'` |
 | `trade-form-store.ts` | `lastInstrument`, `lastSession` | Persists instrument and session across consecutive form submissions for the "Log another" batch entry path |
 | `log-viewer-store.ts` | `filters`, `sortColumn`, `sortDirection`, `selectedTradeId` | Log Viewer filter state (instrument, session, setup type, outcome, date range), active sort column and direction, and the ID of the trade open in the detail modal; filter state persists across in-session navigations |
+| `import-review-store.ts` | `pendingImports: PendingImport[]`, `setupTypes: SetupType[]`, `selectedIds: Set<number>`, `loading: boolean` | Queue state for the Import Review page; `fetchAll()` loads both the pending queue and setup types in parallel; `refresh()` re-fetches the queue only (called after confirm/reject/import); `toggleSelect`, `selectAll`, `clearSelection` manage bulk-action selection; sidebar reads `pendingImports.length` for the count badge |
 
 Zustand stores do **not** cache database results. Every view fetches its data via IPC when it mounts or when the user triggers an action. There is no client-side data cache in MVP.
 

@@ -1,10 +1,12 @@
-import { BookOpen, LayoutDashboard, Plus, ScrollText, Settings } from 'lucide-react'
+import { BookOpen, Inbox, LayoutDashboard, Plus, ScrollText, Settings } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
 import { type Page, useNavigationStore } from '@renderer/stores/navigation-store'
 import { Button } from '@renderer/components/ui/button'
+import { useImportReviewStore } from '@renderer/stores/import-review-store'
 
 const navItems: { page: Page; label: string; icon: React.ElementType }[] = [
   { page: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { page: 'import-review', label: 'Import Review', icon: Inbox },
   { page: 'strategy-rules', label: 'Strategy Rules', icon: ScrollText },
   { page: 'knowledge-base', label: 'Knowledge Base', icon: BookOpen },
   { page: 'settings', label: 'Settings', icon: Settings }
@@ -12,6 +14,7 @@ const navItems: { page: Page; label: string; icon: React.ElementType }[] = [
 
 export function Sidebar(): JSX.Element {
   const { activePage, setPage } = useNavigationStore()
+  const pendingCount = useImportReviewStore((s) => s.pendingImports.length)
 
   return (
     <aside className="flex h-screen w-56 flex-shrink-0 flex-col border-r border-border bg-card">
@@ -40,7 +43,12 @@ export function Sidebar(): JSX.Element {
             )}
           >
             <Icon className="h-4 w-4 flex-shrink-0" />
-            {label}
+            <span className="flex-1">{label}</span>
+            {page === 'import-review' && pendingCount > 0 && (
+              <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">
+                {pendingCount}
+              </span>
+            )}
           </button>
         ))}
       </nav>

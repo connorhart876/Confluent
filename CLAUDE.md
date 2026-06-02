@@ -150,7 +150,7 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 
 - **Minimum window:** 1280 × 800 px (enforced by Electron)
 - **Default window:** 1440 × 900 px
-- **Layout:** Fixed left sidebar + main content area. V2 sidebar: "Add Trade" action button at top, then Dashboard (default) / Strategy Rules / Knowledge Base / Settings nav links. Log Viewer and Calendar are not sidebar destinations in V2 — their components are kept for Dashboard reuse.
+- **Layout:** Fixed left sidebar + main content area. V2 sidebar: "Add Trade" action button at top, then Dashboard (default) / Import Review / Strategy Rules / Knowledge Base / Settings nav links. Log Viewer and Calendar are not sidebar destinations in V2 — their components are kept for Dashboard reuse.
 - **Desktop-only.** No responsive layout, no mobile breakpoints, no touch optimization
 - **Batch entry flow:** instrument and session carry over between consecutive trade entries
 - **P&L auto-computed:** from entry/exit prices, direction, instrument, and quantity using known CME tick values (ES: $50/pt, NQ: $20/pt, MES: $5/pt, MNQ: $2/pt). Outcome auto-derived from P&L sign. Neither is manually entered
