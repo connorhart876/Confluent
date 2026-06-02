@@ -42,5 +42,8 @@ screenshots/
 # drizzle migrations output (optional — commit if you want migration history)
 # drizzle/
 
+# Playwright MCP (browser automation artifacts)
+.playwright-mcp/
+
 # TypeScript
 *.tsbuildinfo

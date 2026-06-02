@@ -22,6 +22,12 @@ import {
   handleKnowledgeBaseUpdate,
   handleKnowledgeBaseDelete
 } from './knowledge-base-handlers'
+import {
+  handleApiKeySave,
+  handleApiKeyClear,
+  handleApiKeyExists
+} from './api-key-handlers'
+import { apiKeyStore } from '../security/api-key-store'
 
 function ok<T>(data: T): IpcResult<T> {
   return { success: true, data }
@@ -405,4 +411,10 @@ export function registerHandlers(): void {
       return err(e instanceof Error ? e.message : 'Unknown error')
     }
   })
+
+  // ── api key ───────────────────────────────────────────────────────────────
+
+  ipcMain.handle('api-key:save', (_e, payload) => handleApiKeySave(apiKeyStore, payload))
+  ipcMain.handle('api-key:clear', () => handleApiKeyClear(apiKeyStore))
+  ipcMain.handle('api-key:exists', () => handleApiKeyExists(apiKeyStore))
 }

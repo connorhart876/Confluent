@@ -1,4 +1,5 @@
 import { SetupTypeList } from '@renderer/components/settings/setup-type-list'
+import { ApiKeySection } from '@renderer/components/settings/api-key-section'
 
 export function SettingsPage(): JSX.Element {
   return (
@@ -6,7 +7,7 @@ export function SettingsPage(): JSX.Element {
       <div className="border-b border-border px-6 py-4">
         <h1 className="text-lg font-semibold">Settings</h1>
       </div>
-      <div className="flex-1 overflow-y-auto px-6 py-5">
+      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-8">
         <section className="max-w-xl space-y-3">
           <div>
             <h2 className="text-sm font-semibold">Setup Types</h2>
@@ -15,6 +16,16 @@ export function SettingsPage(): JSX.Element {
             </p>
           </div>
           <SetupTypeList />
+        </section>
+
+        <section className="max-w-xl space-y-3">
+          <div>
+            <h2 className="text-sm font-semibold">Anthropic API Key</h2>
+            <p className="text-sm text-muted-foreground">
+              Used for AI post-trade review. Stored encrypted on this machine only.
+            </p>
+          </div>
+          <ApiKeySection />
         </section>
       </div>
     </div>

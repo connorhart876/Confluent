@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { initDb } from './db'
 import { registerHandlers } from './ipc'
+import { initApiKeyStore } from './security/api-key-store'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -61,6 +62,7 @@ app.whenReady().then(() => {
     app.quit()
     return
   }
+  initApiKeyStore(join(app.getPath('userData'), 'api-key.enc'))
   registerHandlers()
   createWindow()
 

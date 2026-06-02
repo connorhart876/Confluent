@@ -119,4 +119,20 @@ export type KnowledgeBaseChannels = {
   'knowledge-base:delete': [{ id: number }, IpcResult<void>]
 }
 
-export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels & ImportChannels & KnowledgeBaseChannels
+// api-key channels
+export interface ApiKeySavePayload {
+  key: string
+}
+
+export interface ApiKeyExistsResponse {
+  exists: boolean
+  encryptionAvailable: boolean
+}
+
+export type ApiKeyChannels = {
+  'api-key:save': [ApiKeySavePayload, IpcResult<void>]
+  'api-key:clear': [void, IpcResult<void>]
+  'api-key:exists': [void, IpcResult<ApiKeyExistsResponse>]
+}
+
+export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels & ImportChannels & KnowledgeBaseChannels & ApiKeyChannels

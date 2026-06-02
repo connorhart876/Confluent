@@ -40,6 +40,11 @@ const api = {
     create: (payload: unknown) => invoke('knowledge-base:create', payload),
     update: (payload: unknown) => invoke('knowledge-base:update', payload),
     delete: (payload: { id: number }) => invoke('knowledge-base:delete', payload)
+  },
+  apiKey: {
+    save: (payload: { key: string }) => invoke('api-key:save', payload),
+    clear: () => invoke('api-key:clear'),
+    exists: () => invoke('api-key:exists')
   }
 }
 
