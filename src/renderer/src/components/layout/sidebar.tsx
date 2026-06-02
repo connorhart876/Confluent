@@ -1,12 +1,12 @@
-import { CalendarDays, ClipboardList, List, ScrollText, Settings } from 'lucide-react'
+import { BookOpen, LayoutDashboard, Plus, ScrollText, Settings } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
 import { type Page, useNavigationStore } from '@renderer/stores/navigation-store'
+import { Button } from '@renderer/components/ui/button'
 
 const navItems: { page: Page; label: string; icon: React.ElementType }[] = [
-  { page: 'trade-logger', label: 'Trade Logger', icon: ClipboardList },
-  { page: 'log-viewer', label: 'Log Viewer', icon: List },
-  { page: 'calendar', label: 'Calendar', icon: CalendarDays },
+  { page: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { page: 'strategy-rules', label: 'Strategy Rules', icon: ScrollText },
+  { page: 'knowledge-base', label: 'Knowledge Base', icon: BookOpen },
   { page: 'settings', label: 'Settings', icon: Settings }
 ]
 
@@ -17,6 +17,15 @@ export function Sidebar(): JSX.Element {
     <aside className="flex h-screen w-56 flex-shrink-0 flex-col border-r border-border bg-card">
       <div className="flex h-14 items-center px-4 border-b border-border">
         <span className="text-base font-semibold tracking-tight text-foreground">Confluent</span>
+      </div>
+      <div className="p-2 border-b border-border">
+        <Button
+          className="w-full gap-2"
+          onClick={() => setPage('trade-logger')}
+        >
+          <Plus className="h-4 w-4 flex-shrink-0" />
+          Add Trade
+        </Button>
       </div>
       <nav className="flex flex-col gap-1 p-2 flex-1">
         {navItems.map(({ page, label, icon: Icon }) => (

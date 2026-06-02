@@ -40,7 +40,7 @@ export function TradeEntryForm({ setupTypes }: TradeEntryFormProps): JSX.Element
     }
   })
 
-  const doSubmit = async (values: TradeFormValues): Promise<void> => {
+  const doSubmit = async (values: TradeFormValues, logAnother: boolean): Promise<void> => {
     setSubmitting(true)
     try {
       const toIso = (local: string): string => new Date(local).toISOString()
@@ -67,25 +67,34 @@ export function TradeEntryForm({ setupTypes }: TradeEntryFormProps): JSX.Element
       }
 
       toast({ title: 'Trade saved' })
-      setLastValues(values.instrument, values.session)
-      setScreenshot(null)
-      form.reset({
-        instrument: values.instrument as TradeFormValues['instrument'],
-        session: values.session as TradeFormValues['session'],
-        quantity: 1
-      })
+
+      if (logAnother) {
+        setLastValues(values.instrument, values.session)
+        setScreenshot(null)
+        form.reset({
+          instrument: values.instrument as TradeFormValues['instrument'],
+          session: values.session as TradeFormValues['session'],
+          quantity: 1
+        })
+      } else {
+        setPage('dashboard')
+      }
     } finally {
       setSubmitting(false)
     }
   }
 
-  const handleSubmit = form.handleSubmit((values) => {
-    void doSubmit(values)
+  const handleSave = form.handleSubmit((values) => {
+    void doSubmit(values, false)
+  })
+
+  const handleLogAnother = form.handleSubmit((values) => {
+    void doSubmit(values, true)
   })
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form className="space-y-5">
         {/* Row 1: Instrument | Direction | Session */}
         <div className="grid grid-cols-3 gap-4">
           <FormField
@@ -329,9 +338,12 @@ export function TradeEntryForm({ setupTypes }: TradeEntryFormProps): JSX.Element
         </div>
 
         {/* Row 7: Submit */}
-        <div className="flex justify-end">
-          <Button type="submit" disabled={submitting} className="min-w-[120px]">
-            {submitting ? 'Saving…' : 'Log Trade'}
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" disabled={submitting} onClick={handleLogAnother}>
+            {submitting ? 'Saving…' : 'Log another'}
+          </Button>
+          <Button type="button" disabled={submitting} onClick={handleSave} className="min-w-[120px]">
+            {submitting ? 'Saving…' : 'Save'}
           </Button>
         </div>
       </form>

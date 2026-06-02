@@ -59,7 +59,7 @@ export function CalendarPage(): JSX.Element {
     logStore.resetFilters()
     logStore.setFilter('dateFrom', date)
     logStore.setFilter('dateTo', date)
-    useNavigationStore.getState().setPage('log-viewer')
+    useNavigationStore.getState().setPage('dashboard')
   }
 
   return (
