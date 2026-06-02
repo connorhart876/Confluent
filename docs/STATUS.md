@@ -82,7 +82,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 ### Tradovate Auto-Import
 - [x] Tradovate CSV parser module — parses Orders CSV, pairs fills FIFO, computes P&L from tick values
 - [x] Import review queue IPC handlers — `pending_imports` schema + `import:enqueue/list/get/update/confirm/reject` channels + preload surface
-- [ ] CSV file picker UI — user selects a Tradovate export file
+- [x] CSV file picker UI — `import:from-csv` IPC handler with native file dialog, parse, and enqueue; `window.api.import.fromCsv()` on preload surface
 - [ ] Review queue UI — parsed trades shown for user to assign session, setup type, notes before committing
 - [ ] Tradovate REST API auto-sync (enhancement)
 
@@ -109,7 +109,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Remove standalone Log Viewer and Calendar pages
 
 ### Infrastructure (V2)
-- [x] Test runner (vitest) — 61 unit tests across parser (19), import handlers (22), knowledge-base handlers (20)
+- [x] Test runner (vitest) — 92 unit tests across parser (19), import handlers (22), knowledge-base handlers (20), api-key handlers (24), import-csv handler (7)
 
 ---
 

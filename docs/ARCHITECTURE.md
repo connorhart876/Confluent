@@ -148,7 +148,7 @@ All channels use `domain:action` format:
 | `setup-type` | `create`, `update`, `delete`, `list` |
 | `strategy-rules` | `get`, `upsert` |
 | `screenshot` | `load` |
-| `import` | `enqueue`, `list`, `get`, `update`, `confirm`, `reject` |
+| `import` | `from-csv`, `enqueue`, `list`, `get`, `update`, `confirm`, `reject` |
 | `knowledge-base` | `list`, `get`, `create`, `update`, `delete` |
 | `api-key` | `save`, `clear`, `exists` |
 

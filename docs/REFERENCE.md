@@ -140,7 +140,10 @@ One section per major feature. Constraints and edge cases included.
 - **Error model:** file-level errors (empty CSV, missing required columns) throw; row-level errors (bad instrument, malformed price/date) are collected in `errors[]` array without stopping other rows; unpaired fills (open positions) reported in `summary.unpaired`
 - **Output type:** `ParsedTrade` includes instrument, direction, entryPrice, exitPrice, entryTime, exitTime, quantity, pnl, outcome — but NOT session, setupTypeId, or notes (user-assigned in the review queue)
 - Parser output is consumed by `import:enqueue`, which inserts the trades into `pending_imports` for user annotation before they are confirmed to the main `trades` table
-- No UI for file selection yet — parser and review queue IPC layer are complete; UI integration is pending
+- **File import entry point** (`import:from-csv`): opens a native Electron file dialog filtered to `.csv`; reads the selected file; parses it; bulk-enqueues results; returns `ImportFromCsvResult` — `{ cancelled, filePath, enqueuedCount, parseErrors: { row, reason }[], summary }`. Preload method: `window.api.import.fromCsv()`
+- User cancelling the dialog returns `{ success: true, data: { cancelled: true, enqueuedCount: 0, parseErrors: [], summary: null } }` — not an error envelope, so the renderer can distinguish cancel from failure without special-casing an error string
+- `parseErrors` strips the `raw` row object from the parser's `RowError` — only `row` (number) and `reason` (string) are returned across IPC to keep the payload compact
+- Review queue UI (#46) is still pending — the file picker IPC layer is complete
 
 ---
 
@@ -313,6 +316,10 @@ One section per major feature. Constraints and edge cases included.
 | Setup type deletion blocked by trade references | Show blocking message with setup name and trade count — no deletion occurs |
 | Tradovate CSV with missing required columns | Parser throws with descriptive message listing missing columns |
 | Tradovate CSV row with unsupported instrument | Row added to errors array with reason; other rows still processed |
+| `import:from-csv` — user cancels dialog | Returns success envelope with `cancelled: true`; no error toast |
+| `import:from-csv` — file read fails (permissions, file deleted between dialog and read) | Returns `err('Failed to read file: …')` |
+| `import:from-csv` — CSV missing required columns | Parser throws; handler returns `err('Invalid CSV: …')` |
+| `import:from-csv` — CSV has no valid trades (all rows errored or empty) | Returns success with `enqueuedCount: 0` and `parseErrors` populated |
 | `import:enqueue` with empty array | Handler returns `err('No trades to enqueue')` without touching the DB |
 | `import:confirm` with null session or setupTypeId | Handler returns `err()` naming the missing fields; no insert attempted |
 | `import:reject` with screenshot — file missing on disk | File deletion silently skipped; pending row still deleted — not an error |
