@@ -27,6 +27,7 @@ const api = {
     load: (payload: { filename: string }) => invoke('screenshot:load', payload)
   },
   import: {
+    fromCsv: () => invoke('import:from-csv'),
     enqueue: (payload: unknown) => invoke('import:enqueue', payload),
     list: () => invoke('import:list'),
     get: (payload: { id: number }) => invoke('import:get', payload),

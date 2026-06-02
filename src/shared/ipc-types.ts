@@ -60,6 +60,19 @@ export type ScreenshotChannels = {
 }
 
 // import channels
+export interface ImportFromCsvResult {
+  cancelled: boolean
+  filePath: string | null
+  enqueuedCount: number
+  parseErrors: { row: number; reason: string }[]
+  summary: {
+    totalRows: number
+    pairedTrades: number
+    errorCount: number
+    unpaired: number
+  } | null
+}
+
 export interface PendingImportEnqueuePayload {
   instrument: string
   direction: string
@@ -82,6 +95,7 @@ export interface PendingImportUpdatePayload {
 }
 
 export type ImportChannels = {
+  'import:from-csv': [void, IpcResult<ImportFromCsvResult>]
   'import:enqueue': [PendingImportEnqueuePayload[], IpcResult<PendingImport[]>]
   'import:list': [void, IpcResult<PendingImport[]>]
   'import:get': [{ id: number }, IpcResult<PendingImport>]

@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { ipcMain, BrowserWindow } from 'electron'
 import { writeFileSync, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { eq, and, gte, lte, sql } from 'drizzle-orm'
@@ -15,6 +15,7 @@ import {
   handleImportConfirm,
   handleImportReject
 } from './import-handlers'
+import { handleImportFromCsv } from './import-csv-handler'
 import {
   handleKnowledgeBaseList,
   handleKnowledgeBaseGet,
@@ -379,6 +380,10 @@ export function registerHandlers(): void {
 
   // ── imports ───────────────────────────────────────────────────────────────
 
+  ipcMain.handle('import:from-csv', (e) => {
+    const win = BrowserWindow.fromWebContents(e.sender)
+    return handleImportFromCsv(db, win)
+  })
   ipcMain.handle('import:enqueue', (_e, payload) => handleImportEnqueue(db, payload))
   ipcMain.handle('import:list', () => handleImportList(db))
   ipcMain.handle('import:get', (_e, payload) => handleImportGet(db, payload))
