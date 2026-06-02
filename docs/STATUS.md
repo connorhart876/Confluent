@@ -99,14 +99,14 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 
 ### AI Post-Trade Review
 - [ ] Anthropic API integration via `@anthropic-ai/sdk`
-- [ ] API key storage via Electron `safeStorage`
+- [x] API key storage via Electron `safeStorage`
 - [ ] Post-trade review prompt with strategy rules and knowledge base context
 
 ### Improved UI
 - [ ] Dashboard home page (stats + calendar + recent trades)
-- [ ] Add Trade as sidebar action button
+- [x] Add Trade as sidebar action button
 - [ ] Trade View for single-trade detail
-- [ ] Remove standalone Log Viewer and Calendar pages
+- [x] Remove standalone Log Viewer and Calendar pages
 
 ### Infrastructure (V2)
 - [x] Test runner (vitest) — 61 unit tests across parser (19), import handlers (22), knowledge-base handlers (20)

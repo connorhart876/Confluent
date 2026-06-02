@@ -9,8 +9,11 @@ One section per major feature. Constraints and edge cases included.
 - Form for logging a single completed trade after the session ends — not designed for real-time entry
 - All fields are required: instrument, direction, entry price, exit price, entry time, exit time, session, setup type, contracts (quantity), notes
 - P&L and outcome are not entered manually — they are auto-computed server-side when the trade is saved (P&L from prices/direction/instrument/quantity using CME tick values; outcome derived from P&L sign)
-- Instrument and session carry over from the previous entry within a batch — all other fields reset on submit (quantity resets to 1)
-- Successful submit writes to SQLite and clears the form; the trade is immediately visible in Log Viewer
+- Two submit actions, both fully validate before saving:
+  - **Save** — saves the trade and navigates to Dashboard
+  - **Log another** — saves the trade, stays on the form, and carries over instrument and session for the next entry
+- Instrument and session carry over on "Log another" — all other fields reset (quantity resets to 1)
+- Successful submit writes to SQLite; the trade is immediately visible once the user returns to a trade list view
 - Form state is not persisted — closing the app or navigating away mid-entry loses unsaved data (no autosave in MVP)
 - SQLite write failure returns an error toast; the form is not cleared and the user can retry
 - Screenshot attach is optional — a trade can be saved without one
@@ -145,7 +148,22 @@ One section per major feature. Constraints and edge cases included.
 
 - Setup taxonomy management: add, rename, and delete setup type labels
 - Deletion is blocked if any trades reference the setup type — see Setup Type Deletion Behavior
-- TBD: additional user preferences beyond setup taxonomy (nothing else defined for MVP)
+- Anthropic API key management — see API Key Storage section below
+
+---
+
+## API Key Storage
+
+- The Anthropic API key is stored encrypted at rest using Electron's `safeStorage` API, which delegates to Windows DPAPI on Windows
+- The encrypted blob is written to `%APPDATA%/confluent/api-key.enc` — a binary file, not human-readable; it is never stored in SQLite or `.env`
+- **Save (`api-key:save`):** accepts the raw key string from the renderer; trims whitespace; rejects empty/whitespace-only input; checks `safeStorage.isEncryptionAvailable()` before encrypting; writes to `api-key.enc.tmp` then atomically renames to `api-key.enc` (guards against mid-write corruption)
+- **Clear (`api-key:clear`):** deletes `api-key.enc`; idempotent — succeeds even if no key file is present
+- **Exists (`api-key:exists`):** returns `{ exists: boolean, encryptionAvailable: boolean }` — checks for the file without decrypting; used by the Settings page to display status on mount
+- **Load** is not an IPC channel — `loadApiKey()` is a plain TypeScript function in `src/main/security/api-key-store.ts` exported for consumption by main-process Anthropic SDK handlers only; the decrypted key never crosses the IPC bridge to the renderer
+- `safeStorage.isEncryptionAvailable()` is called at handler invocation time (after `app.ready`) — not at module load
+- DPAPI encryption is scoped to the Windows user account; copying `api-key.enc` to another user or machine produces a decryption error (treated as null — the key is gone)
+- Settings UI shows a tri-state status badge: "No key stored" / "Key stored" / "Encryption unavailable on this system"; the Save button is disabled when encryption is unavailable
+- A soft prefix check warns (non-blocking toast) if the entered key does not start with `sk-ant-` — the save proceeds regardless; no validation against the live Anthropic API
 
 ---
 
@@ -268,6 +286,7 @@ One section per major feature. Constraints and edge cases included.
 ```
 %APPDATA%/confluent/
 ├── confluent.db           ← Single SQLite file, all tables
+├── api-key.enc            ← Anthropic API key encrypted via DPAPI (binary); absent until user saves a key
 ├── screenshots/           ← PNG files, created on startup if missing
 │   └── {YYYY-MM-DD}_{trade_id}.png
 └── logs/                  ← App error logs, created on startup if missing
@@ -298,6 +317,10 @@ One section per major feature. Constraints and edge cases included.
 | `import:confirm` with null session or setupTypeId | Handler returns `err()` naming the missing fields; no insert attempted |
 | `import:reject` with screenshot — file missing on disk | File deletion silently skipped; pending row still deleted — not an error |
 | `knowledge-base:create` / `:update` with invalid category | Handler returns `err()` listing the 9 allowed values; no write attempted |
+| `api-key:save` with empty or whitespace-only key | Handler returns `err('API key cannot be empty')`; no file written |
+| `api-key:save` when `safeStorage.isEncryptionAvailable()` is false | Handler returns `err('Encryption is not available on this system')`; Save button disabled in UI |
+| `api-key:clear` when no key file exists | Silently succeeds — idempotent |
+| `loadApiKey()` when `api-key.enc` exists but decryption fails (e.g. DPAPI profile mismatch) | Returns `null`; caller treats it as no key present |
 
 ---
 

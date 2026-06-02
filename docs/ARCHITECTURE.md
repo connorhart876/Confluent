@@ -42,14 +42,17 @@
 │  │  │  ┌──────────────────────────────────────────┐  │  │  │
 │  │  │  │             React Application            │  │  │  │
 │  │  │  │                                          │  │  │  │
-│  │  │  │  ┌────────┐  ┌────────┐  ┌───────────┐  │  │  │  │
-│  │  │  │  │ Trade  │  │  Log   │  │ Calendar  │  │  │  │  │
-│  │  │  │  │ Logger │  │ Viewer │  │   View    │  │  │  │  │
-│  │  │  │  └────────┘  └────────┘  └───────────┘  │  │  │  │
-│  │  │  │  ┌──────────────────┐  ┌─────────────┐  │  │  │  │
-│  │  │  │  │ Strategy Rules   │  │  Settings   │  │  │  │  │
-│  │  │  │  │     Editor       │  │             │  │  │  │  │
-│  │  │  │  └──────────────────┘  └─────────────┘  │  │  │  │
+│  │  │  │  ┌───────────┐  ┌────────────┐  ┌──────────┐  │  │  │
+│  │  │  │  │ Dashboard │  │ Add Trade  │  │  Trade   │  │  │  │
+│  │  │  │  │ (default) │  │  (action)  │  │   View   │  │  │  │
+│  │  │  │  └───────────┘  └────────────┘  └──────────┘  │  │  │
+│  │  │  │  ┌──────────────────┐  ┌────────────────────┐  │  │  │
+│  │  │  │  │ Strategy Rules   │  │  Knowledge Base    │  │  │  │
+│  │  │  │  │     Editor       │  │                    │  │  │  │
+│  │  │  │  └──────────────────┘  └────────────────────┘  │  │  │
+│  │  │  │  ┌─────────────┐                               │  │  │
+│  │  │  │  │  Settings   │                               │  │  │
+│  │  │  │  └─────────────┘                               │  │  │
 │  │  │  │  ┌──────────────────────────────────┐   │  │  │  │
 │  │  │  │  │        Zustand Stores            │   │  │  │  │
 │  │  │  │  │  (UI state, no persisted data)   │   │  │  │  │
@@ -147,6 +150,7 @@ All channels use `domain:action` format:
 | `screenshot` | `load` |
 | `import` | `enqueue`, `list`, `get`, `update`, `confirm`, `reject` |
 | `knowledge-base` | `list`, `get`, `create`, `update`, `delete` |
+| `api-key` | `save`, `clear`, `exists` |
 
 ### Typed Channels
 
@@ -221,6 +225,7 @@ Electron exposes `app.getPath('userData')`, which resolves to `%APPDATA%/conflue
 ```
 %APPDATA%/confluent/
 ├── confluent.db           ← SQLite database (single file, all tables)
+├── api-key.enc            ← Anthropic API key encrypted via DPAPI (binary, not human-readable)
 ├── screenshots/           ← Chart screenshot images (PNG)
 │   └── 2026-05-24_42.png
 └── logs/                  ← Application error logs
@@ -263,17 +268,20 @@ The DB path is not user-configurable in MVP. It is always `app.getPath('userData
 
 The renderer is a standard React SPA. electron-vite handles bundling, HMR, and the build pipeline. There is no server-side rendering.
 
-**Navigation model:** A fixed left sidebar with five destinations. Clicking a nav item swaps the main content area. This is client-side routing — no URL bar, no browser history.
+**Navigation model:** A fixed left sidebar. "Add Trade" is a distinct action button at the top; below it are four nav link destinations: Dashboard (default), Strategy Rules, Knowledge Base, Settings. Trade View is a programmatic destination only — navigated to via `navigateToTrade(id)` in the navigation store, with no sidebar entry. Log Viewer and Calendar are not sidebar destinations in V2; their page components remain in the codebase for reuse by Dashboard. This is client-side routing — no URL bar, no browser history.
 
 ### Component Areas
 
 | Area | Responsibility |
 |---|---|
-| **Trade Logger** | Form for entering a completed trade. All fields required. Supports clipboard paste and drag-and-drop for screenshots. Instrument and session carry over between consecutive entries in a batch. |
-| **Log Viewer** | Sortable, filterable table of all trades. Stats panel (win rate, trade count, total P&L) reflects active filters. Clicking a row opens a detail view with full trade data and screenshot. |
-| **Calendar View** | Month grid derived from the `trades` table. Each day cell shows trade count, net P&L, and a win/loss color. Clicking a day navigates to that date's trades in Log Viewer. No separate data model — entirely computed from trade records. |
+| **Dashboard** | V2 home page (placeholder). Will show stats summary, calendar, and recent trades. Default landing page on app launch. |
+| **Add Trade** | Trade entry form (same `TradeLoggerPage` component). Reached via the "Add Trade" sidebar button. On submit: "Save" writes the trade and navigates to Dashboard; "Log another" writes the trade, stays on the form, and carries over instrument and session for batch entry. |
+| **Trade View** | V2 single-trade detail page (placeholder). Navigated to programmatically via `navigateToTrade(id)` — no sidebar link. Reads `selectedTradeId` from the navigation store. |
 | **Strategy Rules Editor** | Per-setup-type hybrid editor: four structured text fields (entry criteria, HTF confirmation, valid vs. premature entry, session filter) plus a free-text field. One record per setup type, created automatically alongside the setup type. |
-| **Settings** | Setup taxonomy management — add, rename, delete setup type labels. Deletion is blocked if any trades reference that setup type. |
+| **Knowledge Base** | V2 strategy notes editor (placeholder). Will expose CRUD for `knowledge_base_entries`. |
+| **Settings** | Setup taxonomy management — add, rename, delete setup type labels. Deletion is blocked if any trades reference that setup type. Anthropic API key management. |
+| **Log Viewer** _(not a nav destination in V2)_ | Component file kept at `src/renderer/src/pages/log-viewer-page.tsx`. Used internally by Dashboard. |
+| **Calendar View** _(not a nav destination in V2)_ | Component file kept at `src/renderer/src/pages/calendar-page.tsx`. Used internally by Dashboard. |
 
 ### Zustand Stores
 
@@ -283,8 +291,8 @@ Zustand manages **UI state only** — things that don't need to be persisted and
 
 | Store | State | Purpose |
 |---|---|---|
-| `navigation-store.ts` | `activePage: Page` | Tracks the active sidebar page; defaults to `'trade-logger'` |
-| `trade-form-store.ts` | `lastInstrument`, `lastSession` | Persists instrument and session across consecutive form submissions for batch entry carry-over |
+| `navigation-store.ts` | `activePage: Page`, `selectedTradeId: number \| null` | Tracks the active page; defaults to `'dashboard'`. `navigateToTrade(id)` sets both `activePage: 'trade-view'` and `selectedTradeId` atomically. `Page` type: `'dashboard' \| 'trade-logger' \| 'trade-view' \| 'strategy-rules' \| 'knowledge-base' \| 'settings'` |
+| `trade-form-store.ts` | `lastInstrument`, `lastSession` | Persists instrument and session across consecutive form submissions for the "Log another" batch entry path |
 | `log-viewer-store.ts` | `filters`, `sortColumn`, `sortDirection`, `selectedTradeId` | Log Viewer filter state (instrument, session, setup type, outcome, date range), active sort column and direction, and the ID of the trade open in the detail modal; filter state persists across in-session navigations |
 
 Zustand stores do **not** cache database results. Every view fetches its data via IPC when it mounts or when the user triggers an action. There is no client-side data cache in MVP.
@@ -328,11 +336,12 @@ Understanding startup order matters for initialization dependencies.
 4. Main process opens SQLite connection (creates confluent.db if missing)
 5. Main process runs pending migrations via drizzle-kit runner
    └── If migration fails → show error screen, halt
-6. Main process registers all ipcMain.handle() channels
-7. Main process creates BrowserWindow and loads preload + renderer
-8. Renderer initializes React, mounts root component
-9. Renderer fetches initial data via window.api calls (setup types, etc.)
-10. App is ready for use
+6. Main process initializes API key store (`initApiKeyStore`) with path to `api-key.enc`
+7. Main process registers all ipcMain.handle() channels
+8. Main process creates BrowserWindow and loads preload + renderer
+9. Renderer initializes React, mounts root component
+10. Renderer fetches initial data via window.api calls (setup types, etc.)
+11. App is ready for use
 ```
 
 Steps 3–6 complete before the renderer receives any IPC traffic. There is no race between the database being ready and the renderer making calls.
