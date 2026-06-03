@@ -1,7 +1,7 @@
 import { ipcMain, BrowserWindow } from 'electron'
 import { writeFileSync, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
-import { eq, and, gte, lte, sql } from 'drizzle-orm'
+import { eq, and, gte, lte, sql, isNull } from 'drizzle-orm'
 import { db, screenshotsPath } from '../db'
 import { trades, setupTypes, strategyRules, knowledgeBaseEntries } from '../db/schema'
 import type { IpcResult, TradeCreatePayload } from '../../shared/ipc-types'
@@ -29,6 +29,8 @@ import {
   handleApiKeyExists
 } from './api-key-handlers'
 import { apiKeyStore } from '../security/api-key-store'
+import Anthropic from '@anthropic-ai/sdk'
+import { createReviewer } from '../ai/review'
 
 function ok<T>(data: T): IpcResult<T> {
   return { success: true, data }
@@ -422,4 +424,49 @@ export function registerHandlers(): void {
   ipcMain.handle('api-key:save', (_e, payload) => handleApiKeySave(apiKeyStore, payload))
   ipcMain.handle('api-key:clear', () => handleApiKeyClear(apiKeyStore))
   ipcMain.handle('api-key:exists', () => handleApiKeyExists(apiKeyStore))
+
+  // ── ai review ─────────────────────────────────────────────────────────────
+
+  ipcMain.handle('ai:review-trade', async (_e, payload) => {
+    try {
+      const { tradeId } = payload as { tradeId: number }
+
+      const apiKey = apiKeyStore.loadApiKey()
+      if (!apiKey) return err('No API key configured. Add your Anthropic API key in Settings.')
+
+      const trade = db.select().from(trades).where(eq(trades.id, tradeId)).get()
+      if (!trade) return err(`Trade ${tradeId} not found`)
+
+      const setupType = db.select().from(setupTypes).where(eq(setupTypes.id, trade.setupTypeId)).get()
+      const setupName = setupType?.name ?? 'Unknown Setup'
+
+      const rules = db
+        .select()
+        .from(strategyRules)
+        .where(eq(strategyRules.setupTypeId, trade.setupTypeId))
+        .get()
+      if (!rules) return err(`No strategy rules found for setup type ${trade.setupTypeId}`)
+
+      const globalKbEntries = db
+        .select()
+        .from(knowledgeBaseEntries)
+        .where(isNull(knowledgeBaseEntries.setupTypeId))
+        .all()
+
+      const setupKbEntries = db
+        .select()
+        .from(knowledgeBaseEntries)
+        .where(eq(knowledgeBaseEntries.setupTypeId, trade.setupTypeId))
+        .all()
+
+      const client = new Anthropic({ apiKey })
+      const reviewer = createReviewer(client.messages)
+      const result = await reviewer.reviewTrade({ trade, setupName, rules, globalKbEntries, setupKbEntries })
+
+      if (!result.ok) return err(result.error)
+      return ok({ review: result.review })
+    } catch (e) {
+      return err(e instanceof Error ? e.message : 'Unknown error during review')
+    }
+  })
 }

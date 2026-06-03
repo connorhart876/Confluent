@@ -149,4 +149,17 @@ export type ApiKeyChannels = {
   'api-key:exists': [void, IpcResult<ApiKeyExistsResponse>]
 }
 
-export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels & ImportChannels & KnowledgeBaseChannels & ApiKeyChannels
+// ai channels
+export interface AiReviewPayload {
+  tradeId: number
+}
+
+export interface AiReviewResult {
+  review: string
+}
+
+export type AiChannels = {
+  'ai:review-trade': [AiReviewPayload, IpcResult<AiReviewResult>]
+}
+
+export type AllChannels = TradeChannels & SetupTypeChannels & StrategyRulesChannels & ScreenshotChannels & ImportChannels & KnowledgeBaseChannels & ApiKeyChannels & AiChannels

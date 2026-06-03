@@ -46,6 +46,9 @@ const api = {
     save: (payload: { key: string }) => invoke('api-key:save', payload),
     clear: () => invoke('api-key:clear'),
     exists: () => invoke('api-key:exists')
+  },
+  ai: {
+    reviewTrade: (payload: { tradeId: number }) => invoke('ai:review-trade', payload)
   }
 }
 

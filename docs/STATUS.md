@@ -95,12 +95,12 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 ### Strategy Knowledge Base
 - [x] `knowledge_base_entries` table, schema, and IPC handlers — `knowledge-base:list/get/create/update/delete` channels + preload surface; fixed category enum (9 values)
 - [x] Knowledge base editor UI
-- [ ] AI reads knowledge base alongside strategy rules
+- [x] AI reads knowledge base alongside strategy rules
 
 ### AI Post-Trade Review
-- [ ] Anthropic API integration via `@anthropic-ai/sdk`
+- [x] Anthropic API integration via `@anthropic-ai/sdk`
 - [x] API key storage via Electron `safeStorage`
-- [ ] Post-trade review prompt with strategy rules and knowledge base context
+- [x] Post-trade review prompt with strategy rules and knowledge base context
 
 ### Improved UI
 - [ ] Dashboard home page (stats + calendar + recent trades)
@@ -109,7 +109,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Remove standalone Log Viewer and Calendar pages
 
 ### Infrastructure (V2)
-- [x] Test runner (vitest) — 92 unit tests across parser (19), import handlers (22), knowledge-base handlers (20), api-key handlers (24), import-csv handler (7)
+- [x] Test runner (vitest) — 109 unit tests across parser (19), import handlers (22), knowledge-base handlers (20), api-key handlers (24), import-csv handler (7), AI reviewer (17)
 
 ---
 

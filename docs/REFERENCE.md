@@ -139,6 +139,26 @@ One section per major feature. Constraints and edge cases included.
 - **Delete** checks existence and returns `err()` if not found
 - When a setup type is deleted, all linked knowledge base entry FKs are nullified (entries preserved, `setup_type_id` set to null) — not cascaded or blocked
 
+### Knowledge Base UI (`src/renderer/src/pages/knowledge-base-page.tsx`)
+
+- Accessible via the "Knowledge Base" sidebar nav item
+- Two views managed via local `view` state in `KnowledgeBasePage` — `'list'` (default) and `'editor'`; no global navigation store is involved
+- Setup types and all entries are fetched in parallel on mount
+
+**List view (`KbList`):**
+- Header toolbar: category filter Select (all 9 `KB_CATEGORIES` + "All categories"), setup type filter Select (all user-defined setup types + "All setups"), and a "New entry" button
+- Filtering is client-side — both filters can be active simultaneously; no additional IPC call on filter change
+- Entry rows show: title, category (rendered as a primary-tinted badge), linked setup type name, and last-updated date
+- Empty state (no entries exist): BookOpen icon + guidance text explaining what types of notes to write + "New entry" button
+- Filter-no-match state (entries exist but none match active filters): "No entries match these filters." message
+
+**Editor view (`KbEditor`):**
+- Full-page form: title Input (required), category Select (optional — "No category" maps to `null`), setup type Select (optional — "No setup type" maps to `null`), content Textarea (required, 16 rows)
+- Submit button label is "Create entry" for new entries and "Save entry" for existing ones
+- Unsaved-changes guard: if `formState.isDirty` and the user clicks "Back to list", a dialog appears with "Keep editing" (stay) and "Discard" (return to list) actions
+- Delete is only available for existing entries — a "Delete" button in the editor header opens `KbDeleteDialog`, which requires explicit confirmation before calling `knowledge-base:delete`
+- After save or delete: entry list is re-fetched and the view returns to `'list'`
+
 ---
 
 ## Tradovate CSV Import (V2)
