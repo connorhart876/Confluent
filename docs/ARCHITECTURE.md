@@ -151,6 +151,7 @@ All channels use `domain:action` format:
 | `import` | `from-csv`, `enqueue`, `list`, `get`, `update`, `confirm`, `reject` |
 | `knowledge-base` | `list`, `get`, `create`, `update`, `delete` |
 | `api-key` | `save`, `clear`, `exists` |
+| `ai` | `review-trade` |
 
 ### Typed Channels
 
@@ -317,7 +318,7 @@ These are hard rules, not conventions. Violating them breaks the security and ar
 | `drizzle-orm` | No | Must not import DB layer into renderer |
 | Node.js `fs`, `path`, `os` | No | Not available in sandboxed renderer context |
 | `electron` main-process APIs | No | `ipcMain`, `app`, `BrowserWindow` are main-only |
-| `@anthropic-ai/sdk` | No (MVP) | No external calls in MVP; V2+ moves this to main |
+| `@anthropic-ai/sdk` | No | Main process only — imported by `src/main/ai/review.ts`; never imported in renderer |
 | `window.api.*` (preload surface) | Yes | The only sanctioned data channel |
 | Zustand stores | Yes | Renderer-side UI state management |
 | Shadcn/ui + Tailwind | Yes | UI components, purely presentational |

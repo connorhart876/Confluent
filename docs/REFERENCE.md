@@ -182,6 +182,34 @@ One section per major feature. Constraints and edge cases included.
 
 ---
 
+## AI Post-Trade Review (V2)
+
+- Invoked via the `ai:review-trade` IPC channel; preload method: `window.api.ai.reviewTrade({ tradeId: number })`
+- Returns `IpcResult<{ review: string }>` — on success, `data.review` is a plain-prose analysis; on failure, `error` is a user-facing message
+- **What it does:** gathers the trade, its setup type's strategy rules, all global knowledge base entries (no setup type), and all setup-scoped KB entries, then sends them to Claude for analysis
+- **Model:** Claude Sonnet 4.6 (`claude-sonnet-4-6`) — holds as a single named constant in `src/main/ai/review.ts`
+- **Output format — permanent constraint:** written analysis only. No scores, grades, ratings, letter grades, numerical quality measures, or probability estimates. This is enforced in the system prompt and tested. The analysis covers: what was executed well, which rules were followed or violated, and why each violation matters technically
+- **Prompt caching:** the system prompt and the assembled strategy-rules + KB context block are marked with `cache_control: { type: 'ephemeral' }` (5-minute TTL); the per-trade message is sent uncached after the breakpoint. Caching reduces API cost on repeated reviews of trades that share the same setup type within the TTL window. Caching silently does not engage if the cached prefix is below the model's ~2,048-token minimum — no error is raised
+- **Empty strategy rules:** if a setup type's rules fields are all blank, the review still proceeds — the analysis works from KB context and the trade data, and the prompt notes that rules are not yet defined for this setup
+- **Context scope:** global KB entries (those with no `setup_type_id`) are included in every review; setup-scoped entries (those linked to the trade's setup type) are also included. Entries for unrelated setup types are excluded
+- **IPC handler location:** `src/main/ipc/index.ts` — `ai:review-trade` handler gathers all context from the DB (trades, setup_types, strategy_rules, knowledge_base_entries tables) and delegates to `createReviewer(client.messages).reviewTrade(context)`
+- **Reviewer module:** `src/main/ai/review.ts` — `createReviewer(messages)` factory; takes an injected `IMessagesService` so it is unit-testable without a network call
+
+### Error Handling
+
+| Scenario | Behavior |
+|---|---|
+| No API key configured | Returns `err('No API key configured. Add your Anthropic API key in Settings.')` before constructing the client |
+| Invalid or revoked API key (401) | Maps `Anthropic.AuthenticationError` → `err('API key was rejected by Anthropic. Check your key in Settings.')` |
+| Rate limit hit (429) | Maps `Anthropic.RateLimitError` → `err('Anthropic rate limit reached. Wait a moment and try again.')` |
+| Context too large (413) | Maps `Anthropic.APIError` with `status === 413` → `err('Context too large for Claude. Try removing some knowledge base entries or shortening their content.')` |
+| Anthropic server error (500) | Maps `Anthropic.InternalServerError` → `err('Anthropic server error. Try again in a moment.')` |
+| Other API errors | Maps `Anthropic.APIError` → `err('Anthropic API error ({status}): {message}')` |
+| Network failure | Maps `Error` → `err('Unexpected error: {message}')` |
+| Claude returns no text block | Returns `err('Claude returned no text in the response')` |
+
+---
+
 ## Settings
 
 - Setup taxonomy management: add, rename, and delete setup type labels
@@ -363,6 +391,11 @@ One section per major feature. Constraints and edge cases included.
 | `api-key:save` when `safeStorage.isEncryptionAvailable()` is false | Handler returns `err('Encryption is not available on this system')`; Save button disabled in UI |
 | `api-key:clear` when no key file exists | Silently succeeds — idempotent |
 | `loadApiKey()` when `api-key.enc` exists but decryption fails (e.g. DPAPI profile mismatch) | Returns `null`; caller treats it as no key present |
+| `ai:review-trade` — no API key configured | Returns `err('No API key configured…')` before constructing the client |
+| `ai:review-trade` — invalid key (401) | Returns `err('API key was rejected by Anthropic…')` |
+| `ai:review-trade` — rate limited (429) | Returns `err('Anthropic rate limit reached…')` |
+| `ai:review-trade` — context too large (413) | Returns `err('Context too large for Claude…')` |
+| `ai:review-trade` — trade ID not found | Returns `err('Trade {id} not found')` |
 
 ---
 

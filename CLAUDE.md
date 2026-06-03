@@ -4,7 +4,7 @@
 
 Confluent is a **local Electron desktop app** for futures trading discipline. It is a personal co-pilot that logs trades against a user-defined ruleset and enforces strategy discipline through structure — not a system that makes trading decisions.
 
-**Current scope: V2 in progress.** MVP (fully offline manual trade journal with strategy rules definition) is complete. V2 adds Tradovate auto-import, strategy knowledge base, AI post-trade review, and improved UI. No AI or broker API integration yet — CSV import is the first V2 feature.
+**Current scope: V2 in progress.** MVP (fully offline manual trade journal with strategy rules definition) is complete. V2 adds Tradovate auto-import, strategy knowledge base, AI post-trade review, and improved UI. CSV import, the knowledge base, and the AI review backend are complete; the dashboard and trade view UI remain.
 
 **What Confluent is not:**
 - Not a trading system, signal generator, or execution engine
@@ -37,7 +37,7 @@ Confluent is a **local Electron desktop app** for futures trading discipline. It
 | Calendar | react-day-picker | ^10.0.1 | Used by Shadcn Calendar component in Log Viewer date filter |
 | CSV parsing | papaparse | ^5.5.3 | Tradovate CSV import parser (V2) |
 | Testing | vitest | ^4.1.7 | Unit test runner; Vite-native, no extra config |
-| AI SDK (V2+) | @anthropic-ai/sdk | — | **Not installed yet** |
+| AI SDK (V2+) | @anthropic-ai/sdk | ^0.100.1 | Main process only — powers AI post-trade review (`src/main/ai/review.ts`) |
 
 ### Native Module Setup
 
