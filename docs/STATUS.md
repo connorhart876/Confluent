@@ -94,7 +94,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 
 ### Strategy Knowledge Base
 - [x] `knowledge_base_entries` table, schema, and IPC handlers — `knowledge-base:list/get/create/update/delete` channels + preload surface; fixed category enum (9 values)
-- [ ] Knowledge base editor UI
+- [x] Knowledge base editor UI
 - [ ] AI reads knowledge base alongside strategy rules
 
 ### AI Post-Trade Review
