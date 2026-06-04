@@ -75,6 +75,21 @@ One section per major feature. Constraints and edge cases included.
 
 ---
 
+## Dashboard (V2)
+
+- Default landing page when the app opens — navigated to automatically after saving a trade ("Save" action) and after confirming a pending import
+- Layout: full-width stats row across the top; below it, the calendar grid on the left and a recent-trades panel on the right
+- **Stats row:** all-time totals across every logged trade — win rate, total trade count, total P&L; values are fixed regardless of which month or day is selected in the calendar
+- **Calendar:** shows the currently active month; day cells display trade count and net P&L with green/red/neutral color coding (same as Calendar View); only days with trades are clickable; prev/next chevrons change the active month; a "Today" button appears when viewing any month other than the current one; changing months does not re-fetch — trades are derived client-side from the all-trades fetch
+- **Recent-trades panel:** shows the 10 most recent trades across all history by default (sorted by entry time, newest first); clicking a calendar day switches the panel to show only that day's trades and changes the panel heading to the selected date; a "Show recent" button resets to the default 10-most-recent view; changing months also clears the day selection
+- Clicking any trade row in the recent list navigates to Trade View for that trade (`navigateToTrade(id)`)
+- Data fetch: a single `trade:list({})` call on mount (no filters) loads all trades; month-scoped trades for the calendar are derived client-side; re-fetching happens on remount (navigating away and back reloads the data, so newly added trades appear immediately)
+- Loading state shows a centered spinner-equivalent text; toast on IPC failure (same pattern as other pages)
+- Empty state with no trades: stats show zeroes/dashes, calendar renders with no colored cells, recent list shows "No trades logged yet."
+- No filtering or sorting controls — the Dashboard is a read-only summary view; use the Log Viewer (accessible via Trade View) for filtered exploration
+
+---
+
 ## Chart Screenshot Attach
 
 - Two attach methods: paste from clipboard (Ctrl+V) and drag-and-drop onto the trade entry form

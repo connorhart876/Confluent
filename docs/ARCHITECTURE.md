@@ -275,15 +275,15 @@ The renderer is a standard React SPA. electron-vite handles bundling, HMR, and t
 
 | Area | Responsibility |
 |---|---|
-| **Dashboard** | V2 home page (placeholder). Will show stats summary, calendar, and recent trades. Default landing page on app launch. |
+| **Dashboard** | V2 home page. Default landing page on app launch. Stats row across the top (`StatsPanel` — all-time win rate, total trades, total P&L); month calendar below the stats (`CalendarGrid` — trade count, net P&L, and color coding per day; prev/next/Today navigation); recent-trades panel to the right (`RecentTradesList` — 10 most recent by default). Clicking a calendar day filters the recent list to that day with a "Show recent" clear control; clicking any trade row navigates to Trade View. Data fetched on mount via `trade:list` with no filters; month trades derived client-side. |
 | **Import Review** | V2 pending-import review page. Lists all `pending_imports` rows; lets the user assign session, setup type, notes, and screenshot to each via save-on-blur/change fields; per-row Confirm (disabled until session + setup type assigned) and Reject (confirmation dialog) buttons; bulk Confirm and Reject for selected rows with partial-success toast; empty state with inline CSV import trigger. Sidebar count badge shows queue depth when non-zero. |
 | **Add Trade** | Trade entry form (same `TradeLoggerPage` component). Reached via the "Add Trade" sidebar button. On submit: "Save" writes the trade and navigates to Dashboard; "Log another" writes the trade, stays on the form, and carries over instrument and session for batch entry. |
 | **Trade View** | V2 single-trade detail page (placeholder). Navigated to programmatically via `navigateToTrade(id)` — no sidebar link. Reads `selectedTradeId` from the navigation store. |
 | **Strategy Rules Editor** | Per-setup-type hybrid editor: four structured text fields (entry criteria, HTF confirmation, valid vs. premature entry, session filter) plus a free-text field. One record per setup type, created automatically alongside the setup type. |
 | **Knowledge Base** | V2 strategy notes section. List view with client-side category and setup type filters; entry rows show title, category badge, associated setup type name, and last-updated date. Full-page editor with title (required), category Select, setup type Select, and multiline content textarea (required); "Back to list" triggers an unsaved-changes dialog when the form is dirty. Delete via confirmation dialog in the editor header. Navigation between list and editor is local view state in `KnowledgeBasePage` — no global navigation store is involved. |
 | **Settings** | Setup taxonomy management — add, rename, delete setup type labels. Deletion is blocked if any trades reference that setup type. Anthropic API key management. |
-| **Log Viewer** _(not a nav destination in V2)_ | Component file kept at `src/renderer/src/pages/log-viewer-page.tsx`. Used internally by Dashboard. |
-| **Calendar View** _(not a nav destination in V2)_ | Component file kept at `src/renderer/src/pages/calendar-page.tsx`. Used internally by Dashboard. |
+| **Log Viewer** _(not a nav destination in V2)_ | Page file kept at `src/renderer/src/pages/log-viewer-page.tsx`. Its sub-component `StatsPanel` (`src/renderer/src/components/log-viewer/stats-panel.tsx`) is reused by Dashboard. |
+| **Calendar View** _(not a nav destination in V2)_ | Page file kept at `src/renderer/src/pages/calendar-page.tsx`. Its sub-component `CalendarGrid` (`src/renderer/src/components/calendar/calendar-grid.tsx`) is reused by Dashboard. |
 
 ### Zustand Stores
 

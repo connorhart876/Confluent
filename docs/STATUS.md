@@ -103,7 +103,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Post-trade review prompt with strategy rules and knowledge base context
 
 ### Improved UI
-- [ ] Dashboard home page (stats + calendar + recent trades)
+- [x] Dashboard home page (stats + calendar + recent trades)
 - [x] Add Trade as sidebar action button
 - [ ] Trade View for single-trade detail
 - [x] Remove standalone Log Viewer and Calendar pages
