@@ -89,6 +89,8 @@ const CONFIRMED_TRADE: Trade = {
   setupTypeId: 3,
   notes: '',
   screenshotPath: null,
+  review: null,
+  reviewCreatedAt: null,
   createdAt: '2026-05-27T15:01:00.000Z',
   updatedAt: '2026-05-27T15:01:00.000Z'
 }

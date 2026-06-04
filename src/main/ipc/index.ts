@@ -464,7 +464,14 @@ export function registerHandlers(): void {
       const result = await reviewer.reviewTrade({ trade, setupName, rules, globalKbEntries, setupKbEntries })
 
       if (!result.ok) return err(result.error)
-      return ok({ review: result.review })
+
+      const reviewCreatedAt = now()
+      db.update(trades)
+        .set({ review: result.review, reviewCreatedAt, updatedAt: reviewCreatedAt })
+        .where(eq(trades.id, tradeId))
+        .run()
+
+      return ok({ review: result.review, reviewCreatedAt })
     } catch (e) {
       return err(e instanceof Error ? e.message : 'Unknown error during review')
     }

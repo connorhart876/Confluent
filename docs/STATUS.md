@@ -101,6 +101,7 @@ A fully offline manual trade journal with user-defined strategy rules — no AI,
 - [x] Anthropic API integration via `@anthropic-ai/sdk`
 - [x] API key storage via Electron `safeStorage`
 - [x] Post-trade review prompt with strategy rules and knowledge base context
+- [x] AI review UI — Trade View shows "Request AI Review" button, loading state, error/retry, persisted review display, and "Re-request Review"; reviews stored in `trades.review` + `trades.review_created_at` (migration `0004_first_wrecker.sql`)
 
 ### Improved UI
 - [x] Dashboard home page (stats + calendar + recent trades)

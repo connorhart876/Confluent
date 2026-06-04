@@ -24,6 +24,8 @@ export const trades = sqliteTable('trades', {
   pnl: real('pnl').notNull(),
   notes: text('notes').notNull(),
   screenshotPath: text('screenshot_path'),
+  review: text('review'),
+  reviewCreatedAt: text('review_created_at'),
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull()
 })

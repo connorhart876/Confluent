@@ -156,6 +156,7 @@ export interface AiReviewPayload {
 
 export interface AiReviewResult {
   review: string
+  reviewCreatedAt: string
 }
 
 export type AiChannels = {

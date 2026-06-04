@@ -7,7 +7,7 @@ import { toast } from '@renderer/components/ui/use-toast'
 import { Button } from '@renderer/components/ui/button'
 import { TradeDetailContent } from '@renderer/components/trade-view/trade-detail-content'
 import { StrategyRulesSummary } from '@renderer/components/trade-view/strategy-rules-summary'
-import { AiReviewPlaceholder } from '@renderer/components/trade-view/ai-review-placeholder'
+import { AiReviewSection } from '@renderer/components/trade-view/ai-review-section'
 import { DeleteTradeDialog } from '@renderer/components/trade-view/delete-trade-dialog'
 import { TradeEntryForm } from '@renderer/components/trade-form/trade-entry-form'
 
@@ -198,7 +198,11 @@ export function TradeViewPage(): JSX.Element {
           <div className="max-w-2xl space-y-5">
             <TradeDetailContent trade={trade} setupTypeName={setupTypeName} />
             <StrategyRulesSummary rules={rules} />
-            <AiReviewPlaceholder />
+            <AiReviewSection
+              tradeId={trade.id}
+              savedReview={trade.review}
+              savedReviewCreatedAt={trade.reviewCreatedAt}
+            />
           </div>
         )}
       </div>

@@ -100,7 +100,7 @@ One section per major feature. Constraints and edge cases included.
 - **Notes:** displayed with `whitespace-pre-wrap` if non-empty
 - **Screenshot:** 3-state block — loading spinner, image if found, "Screenshot not found" placeholder (with ImageOff icon) if the file is missing; only renders when `screenshotPath` is non-null on the trade
 - **Strategy Rules (collapsible):** collapsed by default; expanded via a chevron toggle; shows all 5 rules fields read-only (`entryCriteria`, `htfConfirmation`, `validVsPremature`, `sessionFilter`, `freeformNotes`); empty fields are omitted; shows "No rules defined for this setup type." when the setup type has no rules record or all fields are blank
-- **AI Review placeholder:** static section showing "AI review available after configuring API key in Settings." — serves as the integration point for the future AI review UI
+- **AI Review (`AiReviewSection`):** checks API key status via `apiKey.exists()` on mount; if no key, the button is disabled and "AI review available after configuring API key in Settings." is shown; if a key exists, a "Request AI Review" button is shown (or "Re-request Review" if a review already exists); clicking the button calls `window.api.ai.reviewTrade({ tradeId })` with a spinner; on success the review text is displayed with `whitespace-pre-wrap` and a "Reviewed [date]" timestamp in the section header; on failure, the SDK-mapped error message is shown with a "Retry" button; if the trade already has a saved review (`trade.review` / `trade.reviewCreatedAt`), it is shown immediately without a network call; "Re-request Review" overwrites the previous review in-place
 - **Back button:** returns to the page that initiated the navigation (stored as `previousPage` in the navigation store); single-level only — no full history stack; defaults to Dashboard when the store is freshly initialized
 - **Edit mode:** toggled via the "Edit" button; replaces the read-only content with a pre-filled `TradeEntryForm` in `mode='edit'`; all fields are editable except P&L, outcome (auto-computed server-side), and screenshot (deferred); Save calls `trade:update`, which recomputes P&L and outcome from the updated values; on success the page re-renders with the updated trade and returns to read-only mode; Cancel discards changes and returns to read-only mode without a network call; Edit/Delete buttons are hidden while in edit mode
 - **Delete:** "Delete" button opens a confirmation dialog naming the trade; on confirm calls `trade:delete`, which removes the DB row and the screenshot file on disk (missing file is non-fatal); on success shows a "Trade deleted" toast and calls `goBack()`; on failure shows a destructive toast and stays on the page
@@ -218,7 +218,8 @@ One section per major feature. Constraints and edge cases included.
 ## AI Post-Trade Review (V2)
 
 - Invoked via the `ai:review-trade` IPC channel; preload method: `window.api.ai.reviewTrade({ tradeId: number })`
-- Returns `IpcResult<{ review: string }>` — on success, `data.review` is a plain-prose analysis; on failure, `error` is a user-facing message
+- Returns `IpcResult<{ review: string; reviewCreatedAt: string }>` — on success, `data.review` is a plain-prose analysis and `data.reviewCreatedAt` is an ISO 8601 UTC timestamp; on failure, `error` is a user-facing message
+- **Persistence:** after a successful API call the handler writes `review` and `review_created_at` back to the `trades` row; the review survives navigation and app restart; re-requesting overwrites the previous review in the same columns
 - **What it does:** gathers the trade, its setup type's strategy rules, all global knowledge base entries (no setup type), and all setup-scoped KB entries, then sends them to Claude for analysis
 - **Model:** Claude Sonnet 4.6 (`claude-sonnet-4-6`) — holds as a single named constant in `src/main/ai/review.ts`
 - **Output format — permanent constraint:** written analysis only. No scores, grades, ratings, letter grades, numerical quality measures, or probability estimates. This is enforced in the system prompt and tested. The analysis covers: what was executed well, which rules were followed or violated, and why each violation matters technically
@@ -311,6 +312,8 @@ One section per major feature. Constraints and edge cases included.
 | `pnl` | REAL | Signed dollar amount — auto-computed from prices/direction/instrument/quantity |
 | `notes` | TEXT | |
 | `screenshot_path` | TEXT | Relative path, nullable |
+| `review` | TEXT | AI post-trade review text, nullable — populated by `ai:review-trade` |
+| `review_created_at` | TEXT | ISO 8601 UTC, nullable — timestamp of most recent review generation |
 | `created_at` | TEXT | ISO 8601 UTC |
 | `updated_at` | TEXT | ISO 8601 UTC |
 

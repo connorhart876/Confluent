@@ -103,6 +103,8 @@ The binary at `node_modules/better-sqlite3/build/Release/better_sqlite3.node` is
 - `pnl` REAL — **auto-computed** from prices, direction, instrument, and quantity
 - `notes` TEXT
 - `screenshot_path` TEXT — relative to screenshots dir, nullable
+- `review` TEXT — AI post-trade review text, nullable; populated by `ai:review-trade` handler
+- `review_created_at` TEXT — ISO 8601 UTC, nullable; timestamp of most recent review generation
 - `created_at` TEXT — ISO 8601 UTC
 - `updated_at` TEXT — ISO 8601 UTC
 

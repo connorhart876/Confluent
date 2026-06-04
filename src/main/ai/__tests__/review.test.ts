@@ -31,6 +31,8 @@ function makeTrade(overrides: Partial<Trade> = {}): Trade {
     pnl: 500.0,
     notes: 'Waited for the FVG fill, entry was clean.',
     screenshotPath: null,
+    review: null,
+    reviewCreatedAt: null,
     createdAt: '2026-06-03T14:30:00Z',
     updatedAt: '2026-06-03T14:30:00Z',
     ...overrides
