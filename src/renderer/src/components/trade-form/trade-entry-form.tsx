@@ -20,30 +20,89 @@ import { ToggleGroup, ToggleGroupItem } from '@renderer/components/ui/toggle-gro
 import { ScreenshotAttach } from './screenshot-attach'
 import { useNavigationStore } from '@renderer/stores/navigation-store'
 
-interface TradeEntryFormProps {
-  setupTypes: SetupType[]
+function isoToDatetimeLocal(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number): string => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-export function TradeEntryForm({ setupTypes }: TradeEntryFormProps): JSX.Element {
+interface TradeEntryFormProps {
+  setupTypes: SetupType[]
+  mode?: 'create' | 'edit'
+  initialTrade?: Trade
+  onSaved?: (trade: Trade) => void
+  onCancel?: () => void
+}
+
+export function TradeEntryForm({
+  setupTypes,
+  mode = 'create',
+  initialTrade,
+  onSaved,
+  onCancel
+}: TradeEntryFormProps): JSX.Element {
   const { lastInstrument, lastSession, setLastValues } = useTradeFormStore()
   const setPage = useNavigationStore((s) => s.setPage)
 
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
+  const createDefaults: Partial<TradeFormValues> = {
+    instrument: (lastInstrument as TradeFormValues['instrument']) ?? undefined,
+    session: (lastSession as TradeFormValues['session']) ?? undefined,
+    quantity: 1
+  }
+
+  const editDefaults: Partial<TradeFormValues> = initialTrade
+    ? {
+        instrument: initialTrade.instrument as TradeFormValues['instrument'],
+        direction: initialTrade.direction as TradeFormValues['direction'],
+        entryPrice: initialTrade.entryPrice,
+        exitPrice: initialTrade.exitPrice,
+        entryTime: isoToDatetimeLocal(initialTrade.entryTime),
+        exitTime: isoToDatetimeLocal(initialTrade.exitTime),
+        session: initialTrade.session as TradeFormValues['session'],
+        setupTypeId: initialTrade.setupTypeId,
+        quantity: initialTrade.quantity,
+        notes: initialTrade.notes
+      }
+    : {}
+
   const form = useForm<TradeFormValues>({
     resolver: zodResolver(tradeFormSchema),
-    defaultValues: {
-      instrument: (lastInstrument as TradeFormValues['instrument']) ?? undefined,
-      session: (lastSession as TradeFormValues['session']) ?? undefined,
-      quantity: 1
-    }
+    defaultValues: mode === 'edit' ? editDefaults : createDefaults
   })
 
   const doSubmit = async (values: TradeFormValues, logAnother: boolean): Promise<void> => {
     setSubmitting(true)
     try {
       const toIso = (local: string): string => new Date(local).toISOString()
+
+      if (mode === 'edit' && initialTrade) {
+        const result = await window.api.trade.update({
+          id: initialTrade.id,
+          instrument: values.instrument,
+          direction: values.direction,
+          entryPrice: values.entryPrice,
+          exitPrice: values.exitPrice,
+          entryTime: toIso(values.entryTime),
+          exitTime: toIso(values.exitTime),
+          session: values.session,
+          setupTypeId: values.setupTypeId,
+          quantity: values.quantity,
+          notes: values.notes
+        }) as IpcResult<Trade>
+
+        if (!result.success) {
+          toast({ variant: 'destructive', title: 'Save failed', description: result.error })
+          return
+        }
+
+        toast({ title: 'Trade updated' })
+        onSaved?.(result.data)
+        return
+      }
+
       const payload = {
         instrument: values.instrument,
         direction: values.direction,
@@ -329,22 +388,37 @@ export function TradeEntryForm({ setupTypes }: TradeEntryFormProps): JSX.Element
           )}
         />
 
-        {/* Row 6: Screenshot */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium leading-none text-foreground">
-            Chart Screenshot
-          </label>
-          <ScreenshotAttach value={screenshot} onChange={setScreenshot} />
-        </div>
+        {/* Row 6: Screenshot (create mode only) */}
+        {mode === 'create' && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium leading-none text-foreground">
+              Chart Screenshot
+            </label>
+            <ScreenshotAttach value={screenshot} onChange={setScreenshot} />
+          </div>
+        )}
 
         {/* Row 7: Submit */}
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" disabled={submitting} onClick={handleLogAnother}>
-            {submitting ? 'Saving…' : 'Log another'}
-          </Button>
-          <Button type="button" disabled={submitting} onClick={handleSave} className="min-w-[120px]">
-            {submitting ? 'Saving…' : 'Save'}
-          </Button>
+          {mode === 'edit' ? (
+            <>
+              <Button type="button" variant="outline" disabled={submitting} onClick={onCancel}>
+                Cancel
+              </Button>
+              <Button type="button" disabled={submitting} onClick={handleSave} className="min-w-[120px]">
+                {submitting ? 'Saving…' : 'Save changes'}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button type="button" variant="outline" disabled={submitting} onClick={handleLogAnother}>
+                {submitting ? 'Saving…' : 'Log another'}
+              </Button>
+              <Button type="button" disabled={submitting} onClick={handleSave} className="min-w-[120px]">
+                {submitting ? 'Saving…' : 'Save'}
+              </Button>
+            </>
+          )}
         </div>
       </form>
     </Form>

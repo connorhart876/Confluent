@@ -4,7 +4,7 @@
 
 Confluent is a **local Electron desktop app** for futures trading discipline. It is a personal co-pilot that logs trades against a user-defined ruleset and enforces strategy discipline through structure — not a system that makes trading decisions.
 
-**Current scope: V2 in progress.** MVP (fully offline manual trade journal with strategy rules definition) is complete. V2 adds Tradovate auto-import, strategy knowledge base, AI post-trade review, and improved UI. CSV import, the knowledge base, and the AI review backend are complete; the dashboard and trade view UI remain.
+**Current scope: V2 feature-complete.** MVP (fully offline manual trade journal with strategy rules definition) is complete. V2 added Tradovate auto-import, strategy knowledge base, AI post-trade review, and improved UI. All V2 features are implemented; the only deferred V2 item is Tradovate REST API auto-sync (enhancement).
 
 **What Confluent is not:**
 - Not a trading system, signal generator, or execution engine

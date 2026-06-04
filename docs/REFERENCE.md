@@ -55,7 +55,7 @@ One section per major feature. Constraints and edge cases included.
 - Sort: any column, ascending or descending, one column at a time; sort is client-side (no additional IPC call); default is entry time descending (newest first)
 - Stats panel shows win rate, total trade count, and total P&L — recalculates to reflect active filters, not the full dataset; win rate shows "--" when no trades match
 - Clicking a trade row opens a detail modal with all fields and the screenshot (or a "Screenshot not found" placeholder if the file is missing)
-- No inline editing from the log viewer in MVP — trades are edited by opening the detail view (TBD if edit is in MVP scope)
+- Editing and deleting trades is done via the Trade View page — the log viewer detail modal is read-only
 
 ---
 
@@ -87,6 +87,24 @@ One section per major feature. Constraints and edge cases included.
 - Loading state shows a centered spinner-equivalent text; toast on IPC failure (same pattern as other pages)
 - Empty state with no trades: stats show zeroes/dashes, calendar renders with no colored cells, recent list shows "No trades logged yet."
 - No filtering or sorting controls — the Dashboard is a read-only summary view; use the Log Viewer (accessible via Trade View) for filtered exploration
+
+---
+
+## Trade View (V2)
+
+- Standalone full-page view for a single trade — not a modal, not a list
+- Navigated to from anywhere in the app by calling `navigateToTrade(id)` — Dashboard recent-trades list, calendar day drill-down, or any future trade list; no sidebar entry
+- Trade data is fetched fresh via `trade:get` on every navigation — not cached from the calling page; cancelled on fast re-navigation to avoid stale state
+- **Layout:** page header with a Back arrow, the trade's title (`{instrument} {direction} — {date}`), session + outcome subtitle, and Edit/Delete buttons; scrollable content area with a fixed `max-w-2xl` content column
+- **Fields displayed:** instrument, direction, session, entry price, exit price, contracts, outcome (badge), entry time, exit time, P&L (color-coded: green positive, red negative), setup type name — laid out in a 3-column grid
+- **Notes:** displayed with `whitespace-pre-wrap` if non-empty
+- **Screenshot:** 3-state block — loading spinner, image if found, "Screenshot not found" placeholder (with ImageOff icon) if the file is missing; only renders when `screenshotPath` is non-null on the trade
+- **Strategy Rules (collapsible):** collapsed by default; expanded via a chevron toggle; shows all 5 rules fields read-only (`entryCriteria`, `htfConfirmation`, `validVsPremature`, `sessionFilter`, `freeformNotes`); empty fields are omitted; shows "No rules defined for this setup type." when the setup type has no rules record or all fields are blank
+- **AI Review placeholder:** static section showing "AI review available after configuring API key in Settings." — serves as the integration point for the future AI review UI
+- **Back button:** returns to the page that initiated the navigation (stored as `previousPage` in the navigation store); single-level only — no full history stack; defaults to Dashboard when the store is freshly initialized
+- **Edit mode:** toggled via the "Edit" button; replaces the read-only content with a pre-filled `TradeEntryForm` in `mode='edit'`; all fields are editable except P&L, outcome (auto-computed server-side), and screenshot (deferred); Save calls `trade:update`, which recomputes P&L and outcome from the updated values; on success the page re-renders with the updated trade and returns to read-only mode; Cancel discards changes and returns to read-only mode without a network call; Edit/Delete buttons are hidden while in edit mode
+- **Delete:** "Delete" button opens a confirmation dialog naming the trade; on confirm calls `trade:delete`, which removes the DB row and the screenshot file on disk (missing file is non-fatal); on success shows a "Trade deleted" toast and calls `goBack()`; on failure shows a destructive toast and stays on the page
+- **Error state:** if `selectedTradeId` is null or `trade:get` returns not-found or an error, an error message and a "Back to Dashboard" button are shown; `setPage('dashboard')` is called directly (not `goBack()`) to guarantee a safe destination
 
 ---
 
